@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { InfoIcon } from 'lucide-react'
 import { Suspense } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 async function UserDetails() {
   const supabase = await createClient()
@@ -12,7 +13,7 @@ async function UserDetails() {
   }
 
   return (
-    <pre className="max-h-32 overflow-auto rounded border p-3 font-mono text-xs">
+    <pre className="max-h-64 overflow-auto border-2 border-foreground bg-card p-6 font-mono text-xs">
       {JSON.stringify(data.user, null, 2)}
     </pre>
   )
@@ -20,19 +21,25 @@ async function UserDetails() {
 
 export default function ProtectedPage() {
   return (
-    <div className="flex w-full flex-1 flex-col gap-12">
+    <div className="flex w-full flex-1 flex-col gap-16">
       <div className="w-full">
-        <div className="flex items-center gap-3 rounded-md bg-accent p-3 px-5 text-sm text-foreground">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated user
+        <div className="flex items-center gap-3 border-2 border-accent bg-accent/10 p-6 text-sm">
+          <InfoIcon size="20" strokeWidth={2} className="text-accent" />
+          <span className="font-medium">
+            This is a protected page that you can only see as an authenticated user
+          </span>
         </div>
       </div>
-      <div className="flex flex-col items-start gap-2">
-        <h2 className="mb-4 text-2xl font-bold">Your user details</h2>
-        <Suspense fallback={<div>Loading user details...</div>}>
-          <UserDetails />
-        </Suspense>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold">Your User Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Suspense fallback={<div className="text-muted-foreground">Loading user details...</div>}>
+            <UserDetails />
+          </Suspense>
+        </CardContent>
+      </Card>
     </div>
   )
 }

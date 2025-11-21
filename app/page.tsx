@@ -11,6 +11,9 @@ export default function Home() {
           <Link href="/protected">Go to Dashboard</Link>
         </Button>
         <Button variant="outline" asChild>
+          <Link href="/components">Components Showcase</Link>
+        </Button>
+        <Button variant="outline" asChild>
           <Link href="https://github.com/your-repo" target="_blank">
             GitHub
           </Link>
