@@ -40,11 +40,13 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
+            <CardTitle className="text-lg">Check Your Email</CardTitle>
+            <CardDescription className="text-[13px]">
+              Password reset instructions sent
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-[13px] text-muted-foreground">
               If you registered using your email and password, you will receive a password reset
               email.
             </p>
@@ -53,8 +55,8 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg">Reset Your Password</CardTitle>
+            <CardDescription className="text-[13px]">
               Type in your email and we&apos;ll send you a link to reset your password
             </CardDescription>
           </CardHeader>
@@ -72,12 +74,12 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {error && <p className="text-xs text-red-500">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Sending...' : 'Send reset email'}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
+              <div className="mt-4 text-center text-xs">
                 Already have an account?{' '}
                 <Link href="/auth/login" className="underline underline-offset-4">
                   Login

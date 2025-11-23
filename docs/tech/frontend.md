@@ -92,6 +92,37 @@ const ComponentRenderer = ({ nodeId }) => {
 3.  根据组件 `type` 渲染对应的配置表单（如 Table 显示列配置，Text 显示内容输入）。
 4.  表单变更 (`onChange`) 实时调用 `updateComponentProps`。
 
+### 3.4 组件树一致性维护 (Tree Consistency)
+
+由于采用了**扁平化存储 (`components` Map)** 与 **树状引用 (`children` Array)** 相结合的数据结构，在执行增删改操作时必须严格维护数据一致性。
+
+#### 1. 移动组件 (`moveComponent`) 的原子操作
+
+当组件从位置 A 移动到位置 B 时，必须**原子化**地执行以下三个步骤，缺一不可：
+
+1.  **更新旧父节点**: 从 `oldParent.children` 数组中移除该组件 ID。
+2.  **更新新父节点**: 将该组件 ID 插入到 `newParent.children` 的指定 `index` 位置。
+3.  **更新自身**: 将组件的 `parentId` 字段指向 `newParentId`。
+
+#### 2. 删除组件 (`removeComponent`) 的递归清理
+
+删除组件时，仅从父节点的 `children` 中移除 ID 是不够的，必须**递归清理**所有后代节点，防止 Map 中残留“孤儿节点”导致内存泄漏。
+
+```typescript
+// 伪代码逻辑
+function deleteRecursive(nodeId: string, state: EditorState) {
+  const node = state.components[nodeId]
+  // 1. 递归删除所有子节点
+  node.children.forEach((childId) => deleteRecursive(childId, state))
+  // 2. 删除自身
+  delete state.components[nodeId]
+}
+```
+
+#### 3. 循环引用检测
+
+在执行 `moveComponent` (尤其是 `inside` 模式) 前，必须检查**目标父节点是否为当前拖拽节点的后代**。如果是，则禁止移动，防止死循环导致应用崩溃。
+
 ## 4. 重点组件设计
 
 ### 4.1 画布容器 (Canvas)
@@ -106,3 +137,14 @@ const ComponentRenderer = ({ nodeId }) => {
   - **Tab 1: 属性 (Props)**: 组件特有属性 (如 Table 的 columns)。
   - **Tab 2: 样式 (Style)**: 通用布局属性 (Padding, Margin, Align)。
   - **Tab 3: 交互 (Interaction)**: 绑定点击事件动作。
+
+### 4.3 表单自动生成逻辑 (Form Auto-Generation)
+
+在属性面板配置 `Form` 组件时，提供辅助工具：
+
+1.  **触发入口**: 当用户在属性面板选择了 `tableName` 后，显示 "Auto-Fill Fields" (自动填充字段) 按钮。
+2.  **执行逻辑**:
+    - 调用 `SchemaService.getTableColumns(tableName)` 获取 Supabase 表结构。
+    - 将返回的列定义转换为 `FormField` 对象列表。
+    - **快照式更新**: 将生成的字段列表**覆盖**当前组件的 `fields` 属性。
+3.  **后续编辑**: 生成后，用户可以自由修改、排序或删除字段，与原始 Schema 解耦。

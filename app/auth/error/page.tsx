@@ -7,9 +7,9 @@ async function ErrorContent({ searchParams }: { searchParams: Promise<{ error: s
   return (
     <>
       {params?.error ? (
-        <p className="text-sm text-muted-foreground">Code error: {params.error}</p>
+        <p className="text-[13px] text-muted-foreground">Code error: {params.error}</p>
       ) : (
-        <p className="text-sm text-muted-foreground">An unspecified error occurred.</p>
+        <p className="text-[13px] text-muted-foreground">An unspecified error occurred.</p>
       )}
     </>
   )
@@ -22,7 +22,7 @@ export default function Page({ searchParams }: { searchParams: Promise<{ error: 
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Sorry, something went wrong.</CardTitle>
+              <CardTitle className="text-lg">Sorry, something went wrong.</CardTitle>
             </CardHeader>
             <CardContent>
               <Suspense>

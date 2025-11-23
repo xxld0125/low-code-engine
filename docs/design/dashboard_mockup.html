@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LowCode Engine Dashboard</title>
+    <style>
+      :root {
+        --color-text: #383838;
+        --color-bg: #f4efea;
+        --color-accent: #16aa98;
+        --color-white: #ffffff;
+        --border-width: 1.5px;
+        --font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Typography - Admin Adaptation */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 600; /* Reduced from 700 */
+        line-height: 1.2;
+        color: var(--color-text);
+      }
+
+      h1 {
+        font-size: 24px; /* Was 48px */
+      }
+      h2 {
+        font-size: 18px; /* Was 32px */
+      }
+      h3 {
+        font-size: 16px; /* Was 24px */
+      }
+      p {
+        font-size: 13px; /* Was 16px */
+      }
+      small {
+        font-size: 12px; /* Was 14px */
+      }
+
+      /* Layout */
+      .container {
+        max-width: 100%; /* Full width for Admin */
+        margin: 0 auto;
+        padding: 0 24px; /* Was 32px */
+      }
+
+      /* Header */
+      header {
+        border-bottom: var(--border-width) solid var(--color-text);
+        background-color: var(--color-bg);
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--color-text);
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background-color: var(--color-accent);
+        border: var(--border-width) solid var(--color-text);
+      }
+
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-weight: 500;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border: var(--border-width) solid var(--color-text);
+        background-color: var(--color-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+      }
+
+      /* Main Content */
+      main {
+        padding: 24px 0; /* Was 64px 0 */
+        min-height: calc(100vh - 82px);
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 24px; /* Was 48px */
+      }
+
+      .page-title h1 {
+        margin-bottom: 4px; /* Was 8px */
+      }
+
+      .page-subtitle {
+        color: var(--color-text);
+        opacity: 0.8;
+        font-size: 14px; /* Was 18px */
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px; /* Was 12px 24px */
+        font-size: 13px; /* Was 16px */
+        font-weight: 600;
+        text-decoration: none;
+        border: var(--border-width) solid var(--color-text);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        gap: 8px;
+        border-radius: 0; /* Sharp corners */
+      }
+
+      .btn-primary {
+        background-color: var(--color-accent);
+        color: var(--color-white);
+        border-color: var(--color-text); /* Keep border dark for definition */
+      }
+
+      .btn-primary:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--color-text);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: var(--color-text);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--color-white);
+      }
+
+      .btn-icon {
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+      }
+
+      /* Grid */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 32px;
+      }
+
+      /* Cards */
+      .card {
+        background-color: var(--color-white);
+        border: var(--border-width) solid var(--color-text);
+        padding: 16px; /* Was 24px */
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: transform 0.2s ease;
+        position: relative;
+        border-radius: 0; /* Sharp corners */
+      }
+
+      .card:hover {
+        transform: translateY(-2px); /* Reduced movement */
+        box-shadow: 4px 4px 0 rgba(56, 56, 56, 0.1); /* Reduced shadow */
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px; /* Was 16px */
+      }
+
+      .card-icon {
+        width: 40px; /* Was 48px */
+        height: 40px; /* Was 48px */
+        background-color: var(--color-bg);
+        border: var(--border-width) solid var(--color-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px; /* Was 16px */
+      }
+
+      .card-title {
+        font-size: 16px; /* Was 20px */
+        margin-bottom: 4px; /* Was 8px */
+      }
+
+      .card-desc {
+        font-size: 13px; /* Was 14px */
+        color: var(--color-text);
+        opacity: 0.8;
+        margin-bottom: 16px; /* Was 24px */
+        flex-grow: 1;
+      }
+
+      .card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        border-top: 1px solid rgba(56, 56, 56, 0.2);
+        padding-top: 16px;
+        margin-top: auto;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border: 1px solid var(--color-text);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        background-color: #e0e0e0;
+      }
+
+      .status-published {
+        background-color: var(--color-accent);
+        color: var(--color-white);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* Empty State */
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 64px;
+        border: 2px dashed var(--color-text);
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Icons (SVG placeholders) */
+      .icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content container">
+        <a href="#" class="logo">
+          <div class="logo-icon"></div>
+          LOWCODE ENGINE
+        </a>
+        <div class="user-menu">
+          <span>Documentation</span>
+          <span>Support</span>
+          <div class="user-avatar">XL</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Dashboard</h1>
+          <p class="page-subtitle">Manage your applications and pages</p>
+        </div>
+        <button class="btn btn-primary">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="square"
+            />
+          </svg>
+          Create New Page
+        </button>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px">
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="0"
+                  stroke="#383838"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <line x1="3" y1="9" x2="21" y2="9" stroke="#383838" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-icon btn-secondary" title="Edit">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <h3 class="card-title">User Management</h3>
+          <p class="card-desc">Admin panel for managing system users, roles, and permissions.</p>
+          <div class="card-meta">
+            <span class="status-badge status-published">Published</span>
+            <span>Updated 2h ago</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px">
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="0"
+                  stroke="#383838"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <line x1="9" y1="3" x2="9" y2="21" stroke="#383838" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-icon btn-secondary" title="Edit">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <h3 class="card-title">Inventory Tracker</h3>
+          <p class="card-desc">
+            Track product stock levels, incoming shipments, and warehouse status.
+          </p>
+          <div class="card-meta">
+            <span class="status-badge">Draft</span>
+            <span>Updated 1d ago</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px">
+                <rect
+                  x="3"
+                  y="3"
+                  width="18"
+                  height="18"
+                  rx="0"
+                  stroke="#383838"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <line x1="3" y1="14" x2="21" y2="14" stroke="#383838" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-icon btn-secondary" title="Edit">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="square"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <h3 class="card-title">Analytics Dashboard</h3>
+          <p class="card-desc">Visual reports for sales performance and user engagement metrics.</p>
+          <div class="card-meta">
+            <span class="status-badge status-published">Published</span>
+            <span>Updated 3d ago</span>
+          </div>
+        </div>
+
+        <!-- New Project Placeholder (Optional, or just use the button) -->
+        <div
+          class="card"
+          style="
+            border-style: dashed;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            cursor: pointer;
+            min-height: 280px;
+          "
+        >
+          <div
+            style="
+              width: 64px;
+              height: 64px;
+              border-radius: 50%;
+              background-color: var(--color-white);
+              border: 2px solid var(--color-text);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 16px;
+            "
+          >
+            <svg class="icon" viewBox="0 0 24 24" style="width: 32px; height: 32px">
+              <path
+                d="M12 5v14M5 12h14"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="square"
+              />
+            </svg>
+          </div>
+          <h3 class="card-title">Create New Page</h3>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -7,7 +7,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     <main className="flex min-h-screen flex-col items-center bg-background">
       <div className="flex w-full flex-1 flex-col items-center">
         <nav className="flex h-16 w-full justify-center border-b-2 border-b-foreground">
-          <div className="flex w-full max-w-5xl items-center justify-between px-8 text-sm">
+          <div className="flex w-full max-w-5xl items-center justify-between px-8 text-[13px]">
             <div className="flex items-center gap-5 font-semibold">
               <Link href={'/'} className="transition-colors hover:text-accent">
                 Low-Code Engine

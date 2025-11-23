@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management - Runtime Preview</title>
+    <style>
+      :root {
+        --color-text: #383838;
+        --color-bg: #f4efea;
+        --color-accent: #16aa98;
+        --color-white: #ffffff;
+        --color-border: #383838;
+        --border-width: 1.5px;
+        --font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      /* Icons */
+      .icon {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: square;
+        stroke-linejoin: miter;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 13px; /* Was 14px */
+        font-weight: 600;
+        border: var(--border-width) solid var(--color-text);
+        cursor: pointer;
+        gap: 8px;
+        background: var(--color-white);
+        color: var(--color-text);
+        transition: all 0.1s;
+        border-radius: 0; /* Sharp corners */
+      }
+      .btn:hover {
+        background: #f0f0f0;
+      }
+      .btn:active {
+        transform: translate(1px, 1px);
+      }
+
+      .btn-primary {
+        background-color: var(--color-accent);
+        color: var(--color-white);
+      }
+      .btn-primary:hover {
+        box-shadow: 2px 2px 0 var(--color-text);
+        transform: translate(-1px, -1px);
+      }
+      .btn-primary:active {
+        box-shadow: none;
+        transform: translate(0, 0);
+      }
+
+      .btn-text {
+        border: none;
+        background: none;
+        padding: 4px 8px;
+        cursor: pointer;
+        border-radius: 0; /* Sharp corners */
+      }
+      .btn-text:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      /* Runtime Layout */
+      #page-container {
+        max-width: 100%; /* Full width */
+        margin: 0 auto;
+        padding: 24px; /* Was 40px 24px */
+        width: 100%;
+        flex: 1;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid var(--color-border);
+        padding: 24px; /* Was 32px */
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.05);
+        border-radius: 0; /* Sharp corners */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Runtime Page Content -->
+    <div id="page-container">
+      <div class="card">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--color-text);
+            padding-bottom: 16px;
+          "
+        >
+          <h1 style="font-size: 24px">User Management</h1>
+          <button class="btn btn-primary">
+            <svg class="icon" viewBox="0 0 24 24">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y1="12"></line>
+            </svg>
+            Add User
+          </button>
+        </div>
+
+        <!-- Table Component -->
+        <div style="width: 100%; border: 1px solid var(--color-border); background: #fff">
+          <!-- Table Header -->
+          <div
+            style="
+              display: flex;
+              background: #f4efea; /* Admin Brand Color */
+              border-bottom: 1px solid var(--color-border);
+              font-weight: 600;
+              font-size: 13px; /* Admin Size */
+            "
+          >
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              ID
+            </div>
+            <div style="flex: 2; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              Full Name
+            </div>
+            <div style="flex: 3; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              Email
+            </div>
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              Role
+            </div>
+            <div style="flex: 1; padding: 8px 16px; text-align: center">Actions</div>
+          </div>
+          <!-- Table Row 1 -->
+          <div
+            style="
+              display: flex;
+              border-bottom: 1px solid var(--color-border);
+              font-size: 13px; /* Admin Size */
+              align-items: center;
+            "
+          >
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              1
+            </div>
+            <div style="flex: 2; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              John Doe
+            </div>
+            <div style="flex: 3; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              john@example.com
+            </div>
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              <span
+                style="
+                  padding: 2px 8px;
+                  background: #e0e0e0;
+                  border-radius: 0; /* Sharp */
+                  font-size: 12px;
+                  font-weight: 600;
+                  border: 1px solid var(--color-border);
+                "
+                >Admin</span
+              >
+            </div>
+            <div
+              style="flex: 1; padding: 8px 16px; display: flex; justify-content: center; gap: 8px"
+            >
+              <button class="btn-text" title="Edit" style="color: var(--color-accent)">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="btn-text" title="Delete" style="color: #ff4d4f">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <!-- Table Row 2 -->
+          <div
+            style="
+              display: flex;
+              border-bottom: 1px solid var(--color-border);
+              font-size: 13px;
+              align-items: center;
+            "
+          >
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              2
+            </div>
+            <div style="flex: 2; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              Jane Smith
+            </div>
+            <div style="flex: 3; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              jane@example.com
+            </div>
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              <span
+                style="
+                  padding: 2px 8px;
+                  background: #e6f7ff;
+                  color: #1890ff;
+                  border-radius: 0;
+                  font-size: 12px;
+                  font-weight: 600;
+                  border: 1px solid #1890ff;
+                "
+                >Editor</span
+              >
+            </div>
+            <div
+              style="flex: 1; padding: 8px 16px; display: flex; justify-content: center; gap: 8px"
+            >
+              <button class="btn-text" title="Edit" style="color: var(--color-accent)">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="btn-text" title="Delete" style="color: #ff4d4f">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <!-- Table Row 3 -->
+          <div
+            style="
+              display: flex;
+              border-bottom: 1px solid var(--color-border);
+              font-size: 13px;
+              align-items: center;
+            "
+          >
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              3
+            </div>
+            <div style="flex: 2; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              Bob Johnson
+            </div>
+            <div style="flex: 3; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              bob@example.com
+            </div>
+            <div style="flex: 1; padding: 8px 16px; border-right: 1px solid var(--color-border)">
+              <span
+                style="
+                  padding: 2px 8px;
+                  background: #f6ffed;
+                  color: #52c41a;
+                  border-radius: 0;
+                  font-size: 12px;
+                  font-weight: 600;
+                  border: 1px solid #52c41a;
+                "
+                >Viewer</span
+              >
+            </div>
+            <div
+              style="flex: 1; padding: 8px 16px; display: flex; justify-content: center; gap: 8px"
+            >
+              <button class="btn-text" title="Edit" style="color: var(--color-accent)">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="btn-text" title="Delete" style="color: #ff4d4f">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+            gap: 8px;
+            align-items: center;
+          "
+        >
+          <span style="font-size: 13px; color: #666; margin-right: 16px">Showing 1-3 of 24</span>
+          <button class="btn-text" style="font-size: 13px; color: #888">Previous</button>
+          <div
+            style="
+              padding: 6px 12px;
+              background: var(--color-accent);
+              color: #fff;
+              border-radius: 0; /* Sharp */
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            1
+          </div>
+          <button class="btn-text" style="font-size: 13px; color: #333">2</button>
+          <button class="btn-text" style="font-size: 13px; color: #333">3</button>
+          <span style="font-size: 13px; color: #888">...</span>
+          <button class="btn-text" style="font-size: 13px; color: #333">8</button>
+          <button class="btn-text" style="font-size: 13px; color: #333">Next</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

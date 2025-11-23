@@ -60,6 +60,9 @@ export default {
       borderWidth: {
         '1.5': '1.5px',
       },
+      fontSize: {
+        '13': '13px',
+      },
     },
   },
   plugins: [tailwindcssAnimate],

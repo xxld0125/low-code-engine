@@ -4,6 +4,9 @@
 
 ## 1. Overview
 
+> [!IMPORTANT]
+> For the **Admin Dashboard** implementation, please refer to the [Admin Style Adaptation Guide](./design/admin_style_adaptation.md) for specific overrides regarding typography scale, density, and complex components (Tables/Forms).
+
 ### Tech Stack
 
 - **Styling**: Styled-Components (CSS-in-JS with auto-generated class names)
