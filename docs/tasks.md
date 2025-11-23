@@ -9,7 +9,7 @@
 - [x] **1.1 [FE] 项目初始化**
   - [x] 使用 `create-next-app` 初始化 Next.js 15 项目 (TypeScript, Tailwind CSS, App Router)。
   - [x] 配置 `tsconfig.json` 路径别名 (`@/*`)。
-  - [x] 安装核心依赖：`zustand`, `dnd-kit`, `@supabase/supabase-js`, `lucide-react`, `clsx`, `tailwind-merge`。
+  - [x] 安装核心依赖：`zustand`, `dnd-kit`, `@supabase/supabase-js`, `lucide-react`, `clsx`, `tailwind-merge`, `sonner`。
   - [x] 初始化 `shadcn/ui` 并配置 `components.json`。
 
 - [x] **1.2 [FE] 样式系统配置 (Admin Style Adaptation)**
@@ -27,10 +27,14 @@
   - [x] 创建 Supabase Client 实例 (`lib/supabase/client.ts`, `server.ts`)。
   - [x] 生成 Supabase TypeScript 类型定义 (`types/supabase.ts`)。
 
-- [ ] **1.4 [BE] 数据库与安全策略**
-  - [ ] 在 Supabase 执行 SQL 创建 `pages` 表 (参考 `docs/tech/database.md`)。
-  - [ ] 配置 `pages` 表的 RLS 策略 (增删改查仅限 Owner)。
-  - [ ] 验证数据库连接与 RLS 生效。
+- [x] **1.4 [BE] 数据库与安全策略**
+  - [x] 编写 SQL 创建 `pages` 表 (已生成 `docs/supabase_schema.sql`)。
+  - [x] 编写 SQL 配置 `pages` 表的 RLS 策略。
+  - [x] **[新增]** 编写 Schema Introspection RPC 函数 SQL：
+    - [x] `get_tables` 函数。
+    - [x] `get_columns` 函数。
+  - [x] **[待执行]** 在 Supabase Dashboard 执行 `docs/supabase_schema.sql`。
+  - [x] 验证数据库连接与 RLS 生效。
 
 - [x] **1.5 [FE] 认证页面 (Authentication)**
   - [x] 创建 `app/(auth)/login/page.tsx` 和 `app/(auth)/register/page.tsx`。
@@ -45,8 +49,8 @@
   - [ ] 实现 `PageService` (`lib/services/page-service.ts`)：
     - [ ] `getPages`, `getPage`, `createPage`, `updatePageSchema`, `deletePage`。
   - [ ] 实现 `SchemaService` (`lib/services/schema-service.ts`)：
-    - [ ] `getTables`: 获取 public schema 下的表名。
-    - [ ] `getTableColumns`: 获取指定表的字段定义。
+    - [ ] `getTables`: 调用 Supabase RPC `get_tables`。
+    - [ ] `getTableColumns`: 调用 Supabase RPC `get_columns`。
   - [ ] 实现 `DataService` (`lib/services/data-service.ts`)：
     - [ ] `fetchTableData`, `insertRecord`, `updateRecord`, `deleteRecord`。
 
@@ -63,6 +67,7 @@
     - [ ] `undo` / `redo`: 历史记录管理 (History Stack)。
 
 - [ ] **2.3 [FE] 平台入口与布局 (Platform Entry)**
+  - [ ] **参考设计**: `docs/design/dashboard_mockup.html`。
   - [ ] 创建 `app/(main)/layout.tsx`：实现统一的 Header (包含 UserMenu, Logout)。
   - [ ] 创建 `app/dashboard/page.tsx`：
     - [ ] 展示用户页面列表 (调用 `PageService.getPages`)。
@@ -75,6 +80,7 @@
 本阶段目标：构建编辑器的基本布局与拖拽交互框架。
 
 - [ ] **3.1 [FE] 编辑器布局搭建**
+  - [ ] **参考设计**: `docs/design/editor_mockup.html`。
   - [ ] 创建 `/editor/[pageId]/page.tsx` 页面结构。
   - [ ] 实现 `EditorLayout` 或 `ErrorBoundary`：捕获编辑器内部错误。
   - [ ] 实现三栏布局组件：
@@ -96,25 +102,28 @@
 
 ## Phase 4: 组件系统 MVP (Component System)
 
-本阶段目标：实现所有 MVP 核心组件，并确保其符合 Schema 定义。
+本阶段目标：实现所有 MVP 核心组件，并确保其符合 Schema 定义及 Admin Style 规范。
 
 - [ ] **4.1 [FE] 基础布局组件**
   - [ ] `Container`: 基础 `div` 封装，支持 Padding/Margin/BgColor。
   - [ ] `Flex`: Flexbox 布局容器，支持 `justify`, `align`, `gap`。
   - [ ] `Grid`: Grid 布局容器，支持 `columns`, `gap`。
-  - [ ] `Modal`: 模态框容器 (需扩展 Schema 或使用特殊 Container)。
+  - [ ] `Modal`: 模态框容器 (默认隐藏，通过 Action 触发显示)。
 
 - [ ] **4.2 [FE] 基础 UI 组件**
   - [ ] `Text`: 支持 HTML 标签选择 (h1-h3, p, span) 和文本内容绑定。
-  - [ ] `Button`: 支持 variant, size, disabled 属性。
+  - [ ] `Button`: 支持 variant, size, disabled 属性 (及 Icon 支持)。
 
-- [ ] **4.3 [FE] 数据驱动组件**
+- [ ] **4.3 [FE] 数据驱动组件 (Admin Style)**
+  - [ ] **参考设计**: `docs/design/admin_style_adaptation.md`。
   - [ ] `Table`:
     - [ ] 接收 `tableName`, `columns` 等 Props。
+    - [ ] 样式严格遵循 Admin Style (Header 背景色, 边框, Padding)。
     - [ ] 编辑态：显示模拟数据或空状态。
     - [ ] 运行态：调用 `DataService` 加载真实数据。
   - [ ] `Form`:
     - [ ] 接收 `tableName`, `fields` 等 Props。
+    - [ ] 样式严格遵循 Admin Style (Input 高度, 边框, Label 样式)。
     - [ ] 实现表单布局渲染 (Grid/Flex)。
     - [ ] 集成 `react-hook-form` 和 `zod` 验证。
 
@@ -123,6 +132,7 @@
 本阶段目标：允许用户通过 GUI 配置组件属性、样式和交互。
 
 - [ ] **5.1 [FE] 动态属性表单**
+  - [ ] **参考设计**: `docs/design/editor_style_mockup.html`。
   - [ ] 根据当前选中组件的 `type` 渲染不同配置表单。
   - [ ] 实现 `TextPropsForm`, `ButtonPropsForm`。
   - [ ] 实现 `TablePropsForm`: 列配置 (添加/删除/排序列)。
@@ -135,6 +145,7 @@
     - [ ] Flex/Grid: Justify, Align, Gap.
 
 - [ ] **5.3 [FE] 交互编辑器 (Action Editor)**
+  - [ ] **参考设计**: `docs/design/editor_interaction_mockup.html`。
   - [ ] 实现动作配置列表。
   - [ ] 支持添加 `onClick` / `onSubmit` 事件。
   - [ ] 支持配置 Action Payload (如跳转 URL, 目标 Modal ID)。
@@ -144,11 +155,13 @@
 本阶段目标：实现最终页面的解析、渲染与交互逻辑。
 
 - [ ] **6.1 [FE] 运行时页面**
+  - [ ] **参考设计**: `docs/design/runtime_mockup.html`。
   - [ ] 创建 `/page/[pageId]/page.tsx`。
   - [ ] 实现 `RuntimePage` 组件：获取 Schema 并初始化渲染。
   - [ ] 实现 `ErrorBoundary`：防止运行时错误导致白屏。
 
 - [ ] **6.2 [FE] 数据绑定引擎**
+  - [ ] **参考设计**: `docs/design/editor_data_binding_mockup.html`。
   - [ ] 实现表达式解析工具函数 (`resolveExpression`)。
   - [ ] 支持 `{{user.name}}`, `{{row.field}}` 等模板语法。
   - [ ] 在 `PageRenderer` 中注入 Context 数据。
@@ -156,7 +169,7 @@
 - [ ] **6.3 [FE] 交互执行器 (ActionExecutor)**
   - [ ] 实现 `handleAction(action, context)` 函数。
   - [ ] 对接 `DataService` 实现表单提交、表格刷新。
-  - [ ] 实现 UI 交互：弹窗控制、Toast 提示、路由跳转。
+  - [ ] 实现 UI 交互：弹窗控制、Toast 提示 (Sonner)、路由跳转。
 
 ## Phase 7: 集成与测试 (Integration & Polish)
 
