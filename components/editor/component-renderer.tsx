@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { Container, Flex, Grid, Modal } from '@/components/renderer/layout-components'
+import { Text, Button } from '@/components/renderer/basic-components'
+import { Table, Form } from '@/components/renderer/data-components'
+import { CSSProperties } from 'react'
 
 interface ComponentRendererProps {
   componentId: string
@@ -37,6 +41,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   }
 
   const isSelected = selectedId === componentId
+  const isContainer = ['Container', 'Grid', 'Flex', 'Form', 'Modal'].includes(component.type)
 
   // Helper to render children
   const renderChildren = () => {
@@ -45,57 +50,110 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
     ))
   }
 
-  const isContainer = ['Container', 'Grid', 'Flex', 'Form'].includes(component.type)
+  // Content for container components
+  const childrenContent = isContainer ? (
+    <SortableContext items={component.children} strategy={verticalListSortingStrategy}>
+      <div
+        className={cn(
+          'h-full w-full',
+          component.children.length === 0 &&
+            'flex min-h-[20px] items-center justify-center bg-gray-50/50 p-2 text-xs text-gray-300'
+        )}
+      >
+        {component.children.length === 0 ? 'Drop items here' : renderChildren()}
+      </div>
+    </SortableContext>
+  ) : null
 
-  return (
-    <div
-      ref={setNodeRef}
-      style={style as React.CSSProperties}
-      {...attributes}
-      {...listeners}
-      onClick={handleClick}
-      className={cn(
-        'relative box-border min-h-[50px] min-w-[50px] p-2',
-        isSelected && 'z-10 outline outline-2 outline-[#16AA98]',
-        isDragging && 'opacity-50',
-        // Basic styling for visualization
-        component.type === 'Container' && 'border border-dashed border-gray-300 bg-white',
-        component.type === 'Button' &&
-          'inline-flex cursor-pointer items-center justify-center bg-[#16AA98] px-4 py-2 text-white hover:opacity-90',
-        component.type === 'Text' && 'text-[#383838]',
-        component.type === 'Grid' && 'grid grid-cols-2 gap-4 border border-dashed border-gray-300',
-        component.type === 'Flex' && 'flex gap-4 border border-dashed border-gray-300'
-      )}
-    >
-      {isSelected && (
-        <div className="pointer-events-none absolute -top-5 left-0 z-20 whitespace-nowrap rounded-t-sm bg-[#16AA98] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-          {component.type}
-        </div>
-      )}
-
-      {component.type === 'Text' && ((component.props.content as string) || 'Text Component')}
-      {component.type === 'Button' && ((component.props.label as string) || 'Button')}
-
-      {/* Container-like components render children */}
-      {isContainer && (
-        <SortableContext items={component.children} strategy={verticalListSortingStrategy}>
-          <div
-            className={cn(
-              'h-full min-h-[20px] w-full',
-              component.children.length === 0 &&
-                'flex items-center justify-center bg-gray-50/50 text-xs text-gray-300'
-            )}
-          >
-            {component.children.length === 0 ? 'Drop items here' : renderChildren()}
-          </div>
-        </SortableContext>
-      )}
-
-      {component.type === 'Table' && (
-        <div className="flex h-32 w-full items-center justify-center border bg-gray-50 text-sm text-gray-400">
-          Table Placeholder
-        </div>
-      )}
-    </div>
+  const selectionLabel = isSelected && (
+    <span className="pointer-events-none absolute -top-5 left-0 z-20 block whitespace-nowrap rounded-t-sm bg-[#16AA98] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+      {component.type}
+    </span>
   )
+
+  const editorClassName = cn(
+    'relative box-border transition-all',
+    // Container specific styles for editor
+    isContainer && 'min-h-[50px] min-w-[50px] p-2',
+    isSelected && 'z-10 outline outline-2 outline-[#16AA98]',
+    isDragging && 'opacity-50',
+    // Visualization borders for layout components
+    (component.type === 'Container' || component.type === 'Grid' || component.type === 'Flex') &&
+      'border border-dashed border-gray-300 bg-white'
+  )
+
+  const commonProps = {
+    ref: setNodeRef,
+    style: style as CSSProperties,
+    onClick: handleClick,
+    ...attributes,
+    ...listeners,
+    className: editorClassName,
+  }
+
+  // Props from component state
+  const componentProps = component.props || {}
+
+  switch (component.type) {
+    case 'Container':
+      return (
+        <Container {...commonProps} {...componentProps}>
+          {selectionLabel}
+          {childrenContent}
+        </Container>
+      )
+    case 'Flex':
+      return (
+        <Flex {...commonProps} {...componentProps}>
+          {selectionLabel}
+          {childrenContent}
+        </Flex>
+      )
+    case 'Grid':
+      return (
+        <Grid {...commonProps} {...componentProps}>
+          {selectionLabel}
+          {childrenContent}
+        </Grid>
+      )
+    case 'Modal':
+      return (
+        <Modal {...commonProps} {...componentProps}>
+          {selectionLabel}
+          {childrenContent}
+        </Modal>
+      )
+    case 'Text':
+      return (
+        <Text {...commonProps} {...componentProps}>
+          {selectionLabel}
+        </Text>
+      )
+    case 'Button':
+      return (
+        <Button {...commonProps} {...componentProps}>
+          {selectionLabel}
+        </Button>
+      )
+    case 'Table':
+      return (
+        <Table {...commonProps} {...componentProps}>
+          {selectionLabel}
+        </Table>
+      )
+    case 'Form':
+      return (
+        <Form {...commonProps} {...componentProps}>
+          {selectionLabel}
+          {childrenContent}
+        </Form>
+      )
+    default:
+      return (
+        <div {...commonProps}>
+          {selectionLabel}
+          <div className="p-2 text-red-500">Unknown Component: {component.type}</div>
+        </div>
+      )
+  }
 }

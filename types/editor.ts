@@ -1,4 +1,12 @@
-export type ComponentType = 'Container' | 'Flex' | 'Grid' | 'Button' | 'Text' | 'Table' | 'Form'
+export type ComponentType =
+  | 'Container'
+  | 'Flex'
+  | 'Grid'
+  | 'Button'
+  | 'Text'
+  | 'Table'
+  | 'Form'
+  | 'Modal'
 
 export interface LayoutStyle {
   padding?: string

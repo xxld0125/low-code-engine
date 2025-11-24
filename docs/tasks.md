@@ -104,28 +104,28 @@
 
 本阶段目标：实现所有 MVP 核心组件，并确保其符合 Schema 定义及 Admin Style 规范。
 
-- [ ] **4.1 [FE] 基础布局组件**
-  - [ ] `Container`: 基础 `div` 封装，支持 Padding/Margin/BgColor。
-  - [ ] `Flex`: Flexbox 布局容器，支持 `justify`, `align`, `gap`。
-  - [ ] `Grid`: Grid 布局容器，支持 `columns`, `gap`。
-  - [ ] `Modal`: 模态框容器 (默认隐藏，通过 Action 触发显示)。
+- [x] **4.1 [FE] 基础布局组件**
+  - [x] `Container`: 基础 `div` 封装，支持 Padding/Margin/BgColor。
+  - [x] `Flex`: Flexbox 布局容器，支持 `justify`, `align`, `gap`。
+  - [x] `Grid`: Grid 布局容器，支持 `columns`, `gap`。
+  - [x] `Modal`: 模态框容器 (默认隐藏，通过 Action 触发显示)。
 
-- [ ] **4.2 [FE] 基础 UI 组件**
-  - [ ] `Text`: 支持 HTML 标签选择 (h1-h3, p, span) 和文本内容绑定。
-  - [ ] `Button`: 支持 variant, size, disabled 属性 (及 Icon 支持)。
+- [x] **4.2 [FE] 基础 UI 组件**
+  - [x] `Text`: 支持 HTML 标签选择 (h1-h3, p, span) 和文本内容绑定。
+  - [x] `Button`: 支持 variant, size, disabled 属性 (及 Icon 支持)。
 
-- [ ] **4.3 [FE] 数据驱动组件 (Admin Style)**
-  - [ ] **参考设计**: `docs/design/admin_style_adaptation.md`。
-  - [ ] `Table`:
-    - [ ] 接收 `tableName`, `columns` 等 Props。
-    - [ ] 样式严格遵循 Admin Style (Header 背景色, 边框, Padding)。
-    - [ ] 编辑态：显示模拟数据或空状态。
-    - [ ] 运行态：调用 `DataService` 加载真实数据。
-  - [ ] `Form`:
-    - [ ] 接收 `tableName`, `fields` 等 Props。
-    - [ ] 样式严格遵循 Admin Style (Input 高度, 边框, Label 样式)。
-    - [ ] 实现表单布局渲染 (Grid/Flex)。
-    - [ ] 集成 `react-hook-form` 和 `zod` 验证。
+- [x] **4.3 [FE] 数据驱动组件 (Admin Style)**
+  - [x] **参考设计**: `docs/design/admin_style_adaptation.md`。
+  - [x] `Table`:
+    - [x] 接收 `tableName`, `columns` 等 Props。
+    - [x] 样式严格遵循 Admin Style (Header 背景色, 边框, Padding)。
+    - [x] 编辑态：显示模拟数据或空状态。
+    - [x] 运行态：调用 `DataService` 加载真实数据。
+  - [x] `Form`:
+    - [x] 接收 `tableName`, `fields` 等 Props。
+    - [x] 样式严格遵循 Admin Style (Input 高度, 边框, Label 样式)。
+    - [x] 实现表单布局渲染 (Grid/Flex)。
+    - [x] 集成 `react-hook-form` 和 `zod` 验证。
 
 ## Phase 5: 属性面板与配置 (Property Panel)
 

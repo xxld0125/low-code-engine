@@ -20,7 +20,16 @@ import { SidebarItem } from './sidebar-item'
 import { useEditorStore } from '@/stores/editor-store'
 import { ComponentNode, ComponentType } from '@/types/editor'
 import { createPortal } from 'react-dom'
-import { LucideIcon, Square, Layout, Table, Database, Type, MousePointerClick } from 'lucide-react'
+import {
+  LucideIcon,
+  Square,
+  Layout,
+  Table,
+  Database,
+  Type,
+  MousePointerClick,
+  AppWindow,
+} from 'lucide-react'
 
 // Map types to icons for DragOverlay
 const iconMap: Record<string, LucideIcon> = {
@@ -31,6 +40,7 @@ const iconMap: Record<string, LucideIcon> = {
   Form: Database,
   Button: MousePointerClick,
   Text: Type,
+  Modal: AppWindow,
 }
 
 interface EditorLayoutProps {
@@ -117,7 +127,8 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
         }
       } else {
         const isContainer =
-          ['Container', 'Grid', 'Flex', 'Form'].includes(overComponent.type) || overId === rootId
+          ['Container', 'Grid', 'Flex', 'Form', 'Modal'].includes(overComponent.type) ||
+          overId === rootId
         if (!isContainer && overComponent.parentId) {
           parentId = overComponent.parentId
         } else if (!isContainer) {

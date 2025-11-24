@@ -1,6 +1,6 @@
 'use client'
 
-import { Layout, Database, Type, Square, Table, MousePointerClick } from 'lucide-react'
+import { Layout, Database, Type, Square, Table, MousePointerClick, AppWindow } from 'lucide-react'
 import { SidebarItem } from './sidebar-item'
 
 export function LeftSidebar() {
@@ -23,6 +23,7 @@ export function LeftSidebar() {
             <SidebarItem type="Container" icon={Square} label="Container" />
             <SidebarItem type="Grid" icon={Layout} label="Grid" />
             <SidebarItem type="Flex" icon={Layout} label="Flex" />
+            <SidebarItem type="Modal" icon={AppWindow} label="Modal" />
           </div>
         </div>
 
