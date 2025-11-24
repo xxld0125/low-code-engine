@@ -79,26 +79,26 @@
 
 本阶段目标：构建编辑器的基本布局与拖拽交互框架。
 
-- [ ] **3.1 [FE] 编辑器布局搭建**
-  - [ ] **参考设计**: `docs/design/editor_mockup.html`。
-  - [ ] 创建 `/editor/[pageId]/page.tsx` 页面结构。
-  - [ ] 实现 `EditorLayout` 或 `ErrorBoundary`：捕获编辑器内部错误。
-  - [ ] 实现三栏布局组件：
-    - [ ] `LeftSidebar`: 组件物料堆与组件树视图 (Component Tree)。
-    - [ ] `Canvas`: 中心画布区域。
-    - [ ] `RightPanel`: 属性配置区域。
-  - [ ] 实现 `Header`: 包含页面名称、保存按钮 (调用 PageService)、预览按钮。
+- [x] **3.1 [FE] 编辑器布局搭建**
+  - [x] **参考设计**: `docs/design/editor_mockup.html`。
+  - [x] 创建 `/editor/[pageId]/page.tsx` 页面结构。
+  - [x] 实现 `EditorLayout` 或 `ErrorBoundary`：捕获编辑器内部错误。
+  - [x] 实现三栏布局组件：
+    - [x] `LeftSidebar`: 组件物料堆与组件树视图 (Component Tree)。
+    - [x] `Canvas`: 中心画布区域。
+    - [x] `RightPanel`: 属性配置区域。
+  - [x] 实现 `Header`: 包含页面名称、保存按钮 (调用 PageService)、预览按钮。
 
-- [ ] **3.2 [FE] 拖拽系统集成 (dnd-kit)**
-  - [ ] 配置 `DndContext` (Sensors, CollisionDetection)。
-  - [ ] 实现 `SidebarItem` (Draggable)：允许从侧边栏拖出组件。
-  - [ ] 实现 `CanvasDroppable`：允许组件放置到画布。
-  - [ ] 实现画布内排序逻辑 (Sortable)。
+- [x] **3.2 [FE] 拖拽系统集成 (dnd-kit)**
+  - [x] 配置 `DndContext` (Sensors, CollisionDetection)。
+  - [x] 实现 `SidebarItem` (Draggable)：允许从侧边栏拖出组件。
+  - [x] 实现 `CanvasDroppable`：允许组件放置到画布。
+  - [x] 实现画布内排序逻辑 (Sortable)。
 
-- [ ] **3.3 [FE] 画布渲染器**
-  - [ ] 实现 `ComponentRenderer`：递归渲染组件树。
-  - [ ] 实现选中态高亮效果 (Overlay 或 Border)。
-  - [ ] 处理点击事件：阻止冒泡并触发 `selectComponent`。
+- [x] **3.3 [FE] 画布渲染器**
+  - [x] 实现 `ComponentRenderer`：递归渲染组件树。
+  - [x] 实现选中态高亮效果 (Overlay 或 Border)。
+  - [x] 处理点击事件：阻止冒泡并触发 `selectComponent`。
 
 ## Phase 4: 组件系统 MVP (Component System)
 
