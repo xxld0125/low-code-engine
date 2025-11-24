@@ -8,7 +8,7 @@ export default function Home() {
       <p className="text-[13px] text-muted-foreground">Build powerful applications with ease.</p>
       <div className="flex gap-4">
         <Button asChild>
-          <Link href="/protected">Go to Dashboard</Link>
+          <Link href="/dashboard">Go to Dashboard</Link>
         </Button>
         <Button variant="outline" asChild>
           <Link href="/components">Components Showcase</Link>

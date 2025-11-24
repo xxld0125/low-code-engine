@@ -4,6 +4,7 @@ create table if not exists public.pages (
   user_id uuid not null default auth.uid(),
   name text not null,
   slug text not null,
+  description text null,
   schema jsonb null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),

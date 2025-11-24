@@ -45,35 +45,35 @@
 
 本阶段目标：实现后端数据交互、全局状态管理以及平台的基础入口页面。
 
-- [ ] **2.1 [FE] Service 层实现**
-  - [ ] 实现 `PageService` (`lib/services/page-service.ts`)：
-    - [ ] `getPages`, `getPage`, `createPage`, `updatePageSchema`, `deletePage`。
-  - [ ] 实现 `SchemaService` (`lib/services/schema-service.ts`)：
-    - [ ] `getTables`: 调用 Supabase RPC `get_tables`。
-    - [ ] `getTableColumns`: 调用 Supabase RPC `get_columns`。
-  - [ ] 实现 `DataService` (`lib/services/data-service.ts`)：
-    - [ ] `fetchTableData`, `insertRecord`, `updateRecord`, `deleteRecord`。
+- [x] **2.1 [FE] Service 层实现**
+  - [x] 实现 `PageService` (`lib/services/page-service.ts`)：
+    - [x] `getPages`, `getPage`, `createPage`, `updatePageSchema`, `deletePage`。
+  - [x] 实现 `SchemaService` (`lib/services/schema-service.ts`)：
+    - [x] `getTables`: 调用 Supabase RPC `get_tables`。
+    - [x] `getTableColumns`: 调用 Supabase RPC `get_columns`。
+  - [x] 实现 `DataService` (`lib/services/data-service.ts`)：
+    - [x] `fetchTableData`, `insertRecord`, `updateRecord`, `deleteRecord`。
 
-- [ ] **2.2 [FE] EditorStore 实现 (Zustand)**
-  - [ ] 定义 `ComponentNode` 和 `EditorState` 类型 (参考 `docs/tech/schema.md` & `frontend.md`)。
-  - [ ] 创建 `stores/editor-store.ts`。
-  - [ ] 实现核心 Actions：
-    - [ ] `addComponent`: 节点插入逻辑。
-    - [ ] `removeComponent`: 递归删除逻辑。
-    - [ ] `updateComponentProps` / `updateComponentStyle`。
-    - [ ] `selectComponent`: 选中状态切换。
-    - [ ] `moveComponent`: 节点移动与重排序逻辑 (原子操作，含循环引用检测)。
-    - [ ] `copyComponent` / `pasteComponent`: 复制粘贴逻辑。
-    - [ ] `undo` / `redo`: 历史记录管理 (History Stack)。
+- [x] **2.2 [FE] EditorStore Implementation (Zustand)**
+  - [x] 定义 `ComponentNode` 和 `EditorState` 类型 (参考 `docs/tech/schema.md` & `frontend.md`)。
+  - [x] 创建 `stores/editor-store.ts`。
+  - [x] 实现核心 Actions：
+    - [x] `addComponent`: 节点插入逻辑。
+    - [x] `removeComponent`: 递归删除逻辑。
+    - [x] `updateComponentProps` / `updateComponentStyle`。
+    - [x] `selectComponent`: 选中状态切换。
+    - [x] `moveComponent`: 节点移动与重排序逻辑 (原子操作，含循环引用检测)。
+    - [x] `copyComponent` / `pasteComponent`: 复制粘贴逻辑。
+    - [x] `undo` / `redo`: 历史记录管理 (History Stack)。
 
-- [ ] **2.3 [FE] 平台入口与布局 (Platform Entry)**
-  - [ ] **参考设计**: `docs/design/dashboard_mockup.html`。
-  - [ ] 创建 `app/(main)/layout.tsx`：实现统一的 Header (包含 UserMenu, Logout)。
-  - [ ] 创建 `app/dashboard/page.tsx`：
-    - [ ] 展示用户页面列表 (调用 `PageService.getPages`)。
-    - [ ] 实现新建页面功能 (调用 `PageService.createPage`)。
-    - [ ] 实现删除页面功能。
-    - [ ] 提供跳转至 Editor 和 Runtime 的入口。
+- [x] **2.3 [FE] 平台入口与布局 (Platform Entry)**
+  - [x] **参考设计**: `docs/design/dashboard_mockup.html`。
+  - [x] 创建 `app/(main)/layout.tsx`：实现统一的 Header (包含 UserMenu, Logout)。
+  - [x] 创建 `app/dashboard/page.tsx`：
+    - [x] 展示用户页面列表 (调用 `PageService.getPages`)。
+    - [x] 实现新建页面功能 (调用 `PageService.createPage`)。
+    - [x] 实现删除页面功能。
+    - [x] 提供跳转至 Editor 和 Runtime 的入口。
 
 ## Phase 3: 编辑器 UI 框架 (Editor UI Foundation)
 
