@@ -115,6 +115,7 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
               <Label className="text-[12px] font-medium text-[#383838]">{field.label}</Label>
               {/* Admin Style: Input Border #383838 is handled in Input component or verify below */}
               <Input
+                name={field.name}
                 placeholder={`Enter ${field.label}`}
                 type={field.type}
                 className="border-[#383838]"

@@ -153,22 +153,22 @@
 
 本阶段目标：实现最终页面的解析、渲染与交互逻辑。
 
-- [ ] **6.1 [FE] 运行时页面**
-  - [ ] **参考设计**: `docs/design/runtime_mockup.html`。
-  - [ ] 创建 `/page/[pageId]/page.tsx`。
-  - [ ] 实现 `RuntimePage` 组件：获取 Schema 并初始化渲染。
-  - [ ] 实现 `ErrorBoundary`：防止运行时错误导致白屏。
+- [x] **6.1 [FE] 运行时页面**
+  - [x] **参考设计**: `docs/design/runtime_mockup.html`。
+  - [x] 创建 `/page/[pageId]/page.tsx`。
+  - [x] 实现 `RuntimePage` 组件：获取 Schema 并初始化渲染。
+  - [x] 实现 `ErrorBoundary`：防止运行时错误导致白屏。
 
-- [ ] **6.2 [FE] 数据绑定引擎**
-  - [ ] **参考设计**: `docs/design/editor_data_binding_mockup.html`。
-  - [ ] 实现表达式解析工具函数 (`resolveExpression`)。
-  - [ ] 支持 `{{user.name}}`, `{{row.field}}` 等模板语法。
-  - [ ] 在 `PageRenderer` 中注入 Context 数据。
+- [x] **6.2 [FE] 数据绑定引擎**
+  - [x] **参考设计**: `docs/design/editor_data_binding_mockup.html`。
+  - [x] 实现表达式解析工具函数 (`resolveExpression`)。
+  - [x] 支持 `{{user.name}}`, `{{row.field}}` 等模板语法。
+  - [x] 在 `PageRenderer` 中注入 Context 数据。
 
-- [ ] **6.3 [FE] 交互执行器 (ActionExecutor)**
-  - [ ] 实现 `handleAction(action, context)` 函数。
-  - [ ] 对接 `DataService` 实现表单提交、表格刷新。
-  - [ ] 实现 UI 交互：弹窗控制、Toast 提示 (Sonner)、路由跳转。
+- [x] **6.3 [FE] 交互执行器 (ActionExecutor)**
+  - [x] 实现 `handleAction(action, context)` 函数。
+  - [x] 对接 `DataService` 实现表单提交、表格刷新。
+  - [x] 实现 UI 交互：弹窗控制、Toast 提示 (Sonner)、路由跳转。
 
 ## Phase 7: 集成与测试 (Integration & Polish)
 
