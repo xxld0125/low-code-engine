@@ -25,44 +25,6 @@ export const Container = forwardRef<HTMLDivElement, BaseProps>(
 )
 Container.displayName = 'Container'
 
-export const Flex = forwardRef<HTMLDivElement, BaseProps>(
-  ({ style, className, children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn('flex min-h-[50px] w-full gap-2 p-2', className)}
-        style={{
-          display: 'flex', // Force display flex in case style overrides it unexpectedly, though style takes precedence usually
-          ...style,
-        }}
-        {...props}
-      >
-        {children}
-      </div>
-    )
-  }
-)
-Flex.displayName = 'Flex'
-
-export const Grid = forwardRef<HTMLDivElement, BaseProps>(
-  ({ style, className, children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn('grid min-h-[50px] w-full gap-2 p-2', className)}
-        style={{
-          display: 'grid',
-          ...style,
-        }}
-        {...props}
-      >
-        {children}
-      </div>
-    )
-  }
-)
-Grid.displayName = 'Grid'
-
 // Modal in editor is rendered as a visible container with special styling
 // In runtime, it will be a real dialog
 export const Modal = forwardRef<HTMLDivElement, BaseProps>(

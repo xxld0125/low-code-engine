@@ -105,9 +105,7 @@
 本阶段目标：实现所有 MVP 核心组件，并确保其符合 Schema 定义及 Admin Style 规范。
 
 - [x] **4.1 [FE] 基础布局组件**
-  - [x] `Container`: 基础 `div` 封装，支持 Padding/Margin/BgColor。
-  - [x] `Flex`: Flexbox 布局容器，支持 `justify`, `align`, `gap`。
-  - [x] `Grid`: Grid 布局容器，支持 `columns`, `gap`。
+  - [x] `Container`: 基础 `div` 封装，支持 Padding/Margin/BgColor，支持 Flex/Grid 布局配置。
   - [x] `Modal`: 模态框容器 (默认隐藏，通过 Action 触发显示)。
 
 - [x] **4.2 [FE] 基础 UI 组件**
@@ -131,24 +129,25 @@
 
 本阶段目标：允许用户通过 GUI 配置组件属性、样式和交互。
 
-- [ ] **5.1 [FE] 动态属性表单**
-  - [ ] **参考设计**: `docs/design/editor_style_mockup.html`。
-  - [ ] 根据当前选中组件的 `type` 渲染不同配置表单。
-  - [ ] 实现 `TextPropsForm`, `ButtonPropsForm`。
-  - [ ] 实现 `TablePropsForm`: 列配置 (添加/删除/排序列)。
-  - [ ] 实现 `FormPropsForm`: 字段配置 (自动生成字段功能)。
+- [x] **5.1 [FE] 动态属性表单**
+  - [x] **参考设计**: `docs/design/editor_style_mockup.html`。
+  - [x] 根据当前选中组件的 `type` 渲染不同配置表单。
+  - [x] 实现 `TextPropsForm`, `ButtonPropsForm`。
+  - [x] 实现 `TablePropsForm`: 列配置 (添加/删除/排序列)。
+  - [x] 实现 `FormPropsForm`: 字段配置 (自动生成字段功能)。
 
-- [ ] **5.2 [FE] 样式编辑器 (Style Editor)**
-  - [ ] 实现通用样式表单：
-    - [ ] Layout: Width, Height, Display.
-    - [ ] Spacing: Margin, Padding.
-    - [ ] Flex/Grid: Justify, Align, Gap.
+- [x] **5.2 [FE] 样式编辑器 (Style Editor)**
+  - [x] 实现通用样式表单：
+    - [x] Layout: Width, Height.
+    - [x] Display: 仅 Container 可配置。
+    - [x] Spacing: Margin, Padding.
+    - [x] Flex/Grid: Justify, Align, Gap.
 
-- [ ] **5.3 [FE] 交互编辑器 (Action Editor)**
-  - [ ] **参考设计**: `docs/design/editor_interaction_mockup.html`。
-  - [ ] 实现动作配置列表。
-  - [ ] 支持添加 `onClick` / `onSubmit` 事件。
-  - [ ] 支持配置 Action Payload (如跳转 URL, 目标 Modal ID)。
+- [x] **5.3 [FE] 交互编辑器 (Action Editor)**
+  - [x] **参考设计**: `docs/design/editor_interaction_mockup.html`。
+  - [x] 实现动作配置列表 (仅 Button/Form 支持)。
+  - [x] 支持添加 `onClick` / `onSubmit` 事件。
+  - [x] 支持配置 Action Payload (如跳转 URL, 目标 Modal ID)。
 
 ## Phase 6: 运行时与数据绑定 (Runtime & Data Binding)
 

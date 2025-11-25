@@ -1,12 +1,4 @@
-export type ComponentType =
-  | 'Container'
-  | 'Flex'
-  | 'Grid'
-  | 'Button'
-  | 'Text'
-  | 'Table'
-  | 'Form'
-  | 'Modal'
+export type ComponentType = 'Container' | 'Button' | 'Text' | 'Table' | 'Form' | 'Modal'
 
 export interface LayoutStyle {
   padding?: string
@@ -20,11 +12,28 @@ export interface LayoutStyle {
   [key: string]: string | number | undefined
 }
 
+export enum ActionType {
+  OPEN_MODAL = 'OPEN_MODAL',
+  CLOSE_MODAL = 'CLOSE_MODAL',
+  SUBMIT_FORM = 'SUBMIT_FORM',
+  REFRESH_TABLE = 'REFRESH_TABLE',
+  NAVIGATE = 'NAVIGATE',
+  SHOW_TOAST = 'SHOW_TOAST',
+}
+
 export interface ActionConfig {
   trigger: 'onClick' | 'onSubmit'
-  type: string
-  payload: unknown
+  type: ActionType
+  payload: ActionPayload
 }
+
+export type ActionPayload =
+  | { modalId: string } // OPEN_MODAL, CLOSE_MODAL
+  | { url: string } // NAVIGATE
+  | { type: 'success' | 'error' | 'info'; message: string } // SHOW_TOAST
+  | { tableId?: string } // REFRESH_TABLE
+  | { formId?: string } // SUBMIT_FORM
+  | Record<string, unknown> // Fallback
 
 export interface ComponentNode {
   id: string

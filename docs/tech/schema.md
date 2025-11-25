@@ -17,15 +17,13 @@ interface ComponentNode {
   // 布局样式 (严格限制为布局相关，禁止颜色/字体)
   style: LayoutStyle
 
-  // 交互动作配置
+  // 交互动作配置 (仅 Button 和 Form 组件支持)
   actions?: ActionConfig[]
 }
 
 // 组件类型枚举
 type ComponentType =
   | 'Container' // 基础容器
-  | 'Flex' // 弹性布局
-  | 'Grid' // 网格布局
   | 'Button' // 按钮
   | 'Text' // 文本
   | 'Table' // 数据表格
@@ -37,7 +35,7 @@ interface LayoutStyle {
   margin?: string // e.g., "0px 0px 16px 0px"
   width?: string // e.g., "100%", "500px"
   height?: string // e.g., "auto", "100%"
-  display?: 'block' | 'flex' | 'grid'
+  display?: 'block' | 'flex' | 'grid' // 仅容器类组件 (Container) 支持配置
   justifyContent?: 'flex-start' | 'center' | 'flex-end' | 'space-between'
   alignItems?: 'flex-start' | 'center' | 'flex-end'
   gap?: string // e.g., "8px"
@@ -53,16 +51,11 @@ interface ActionConfig {
 
 ## 2. 组件 Props 定义
 
-### 2.1 容器类 (Container, Flex, Grid)
+### 2.1 容器类 (Container)
 
 ```typescript
 interface ContainerProps {
   // 无特殊 Props，主要靠 style 控制
-}
-
-interface GridProps {
-  columns: number // 列数，e.g., 2, 3, 4
-  gap: number // 间距 px
 }
 ```
 
@@ -79,7 +72,7 @@ interface TextProps {
 
 ```typescript
 interface ButtonProps {
-  text: string // 按钮文字
+  label: string // 按钮文字
   variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' // shadcn 变体
   size: 'default' | 'sm' | 'lg' | 'icon' // shadcn 尺寸
   disabled?: boolean

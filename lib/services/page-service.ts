@@ -32,10 +32,10 @@ export class PageService {
     return data
   }
 
-  static async updatePageSchema(id: string, schema: Json) {
+  static async updatePageSchema(id: string, schema: unknown) {
     const { data, error } = await this.supabase
       .from('pages')
-      .update({ schema, updated_at: new Date().toISOString() })
+      .update({ schema: schema as Json, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single()

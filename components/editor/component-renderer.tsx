@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Container, Flex, Grid, Modal } from '@/components/renderer/layout-components'
+import { Container, Modal } from '@/components/renderer/layout-components'
 import { Text, Button } from '@/components/renderer/basic-components'
 import { Table, Form } from '@/components/renderer/data-components'
 import { CSSProperties } from 'react'
@@ -41,7 +41,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   }
 
   const isSelected = selectedId === componentId
-  const isContainer = ['Container', 'Grid', 'Flex', 'Form', 'Modal'].includes(component.type)
+  const isContainer = ['Container', 'Form', 'Modal'].includes(component.type)
 
   // Helper to render children
   const renderChildren = () => {
@@ -76,8 +76,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
     isSelected && 'z-10 outline outline-2 outline-[#16AA98]',
     isDragging && 'opacity-50',
     // Visualization borders for layout components
-    (component.type === 'Container' || component.type === 'Grid' || component.type === 'Flex') &&
-      'border border-dashed border-gray-300 bg-white'
+    component.type === 'Container' && 'border border-dashed border-gray-300 bg-white'
   )
 
   const commonProps = {
@@ -99,20 +98,6 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
           {selectionLabel}
           {childrenContent}
         </Container>
-      )
-    case 'Flex':
-      return (
-        <Flex {...commonProps} {...componentProps}>
-          {selectionLabel}
-          {childrenContent}
-        </Flex>
-      )
-    case 'Grid':
-      return (
-        <Grid {...commonProps} {...componentProps}>
-          {selectionLabel}
-          {childrenContent}
-        </Grid>
       )
     case 'Modal':
       return (
