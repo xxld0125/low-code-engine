@@ -10,7 +10,9 @@ import {
   DragEndEvent,
   defaultDropAnimationSideEffects,
   DropAnimation,
+  closestCenter,
 } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import { useState, useEffect } from 'react'
 import { LeftSidebar } from './left-sidebar'
 import { RightPanel } from './right-panel'
@@ -62,7 +64,7 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
     setMounted(true)
   }, [])
 
-  const { addComponent, moveComponent, components, rootId } = useEditorStore()
+  const { addComponent, reorderChildren, components, rootId } = useEditorStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -140,17 +142,27 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
       return
     }
 
-    // Case 2: Reordering existing components
+    // Case 2: Reordering existing components (sortable)
     if (activeId !== overId) {
       const activeComponent = components[activeId]
       const overComponent = components[overId]
 
       if (!activeComponent || !overComponent) return
 
+      // Only allow reordering if they have the same parent
       if (activeComponent.parentId === overComponent.parentId) {
         const parent = components[activeComponent.parentId!]
+        if (!parent) return
+
+        const oldIndex = parent.children.indexOf(activeId)
         const newIndex = parent.children.indexOf(overId)
-        moveComponent(activeId, activeComponent.parentId!, newIndex)
+
+        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+          // Use arrayMove to get the correct new order
+          const newChildren = arrayMove(parent.children, oldIndex, newIndex)
+          // Update the store with the new children order
+          reorderChildren(activeComponent.parentId!, newChildren)
+        }
       }
     }
   }
@@ -167,7 +179,9 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
 
   return (
     <DndContext
+      id="editor-dnd-context"
       sensors={sensors}
+      collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

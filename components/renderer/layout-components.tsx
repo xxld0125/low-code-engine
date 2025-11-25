@@ -30,7 +30,7 @@ export const Flex = forwardRef<HTMLDivElement, BaseProps>(
     return (
       <div
         ref={ref}
-        className={cn('flex min-h-[50px] w-full', className)}
+        className={cn('flex min-h-[50px] w-full gap-2 p-2', className)}
         style={{
           display: 'flex', // Force display flex in case style overrides it unexpectedly, though style takes precedence usually
           ...style,
@@ -49,7 +49,7 @@ export const Grid = forwardRef<HTMLDivElement, BaseProps>(
     return (
       <div
         ref={ref}
-        className={cn('grid min-h-[50px] w-full', className)}
+        className={cn('grid min-h-[50px] w-full gap-2 p-2', className)}
         style={{
           display: 'grid',
           ...style,

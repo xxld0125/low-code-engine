@@ -13,6 +13,7 @@ interface EditorState {
   updateComponentStyle: (id: string, style: LayoutStyle) => void
   selectComponent: (id: string | null) => void
   moveComponent: (id: string, newParentId: string, index: number) => void
+  reorderChildren: (parentId: string, newChildren: string[]) => void
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -38,7 +39,7 @@ export const useEditorStore = create<EditorState>((set) => ({
         components: {
           ...state.components,
           [parentId]: { ...parent, children: newChildren },
-          [component.id]: component,
+          [component.id]: { ...component, parentId },
         },
       }
     }),
@@ -135,6 +136,19 @@ export const useEditorStore = create<EditorState>((set) => ({
           [component.parentId]: { ...oldParent, children: oldChildren },
           [newParentId]: { ...newParent, children: newChildren },
           [id]: { ...component, parentId: newParentId },
+        },
+      }
+    }),
+
+  reorderChildren: (parentId, newChildren) =>
+    set((state) => {
+      const parent = state.components[parentId]
+      if (!parent) return state
+
+      return {
+        components: {
+          ...state.components,
+          [parentId]: { ...parent, children: newChildren },
         },
       }
     }),

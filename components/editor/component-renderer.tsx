@@ -53,15 +53,13 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   // Content for container components
   const childrenContent = isContainer ? (
     <SortableContext items={component.children} strategy={verticalListSortingStrategy}>
-      <div
-        className={cn(
-          'h-full w-full',
-          component.children.length === 0 &&
-            'flex min-h-[20px] items-center justify-center bg-gray-50/50 p-2 text-xs text-gray-300'
-        )}
-      >
-        {component.children.length === 0 ? 'Drop items here' : renderChildren()}
-      </div>
+      {component.children.length === 0 ? (
+        <div className="flex min-h-[20px] items-center justify-center bg-gray-50/50 p-2 text-xs text-gray-300">
+          Drop items here
+        </div>
+      ) : (
+        renderChildren()
+      )}
     </SortableContext>
   ) : null
 
