@@ -1,34 +1,57 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { PageService } from '@/lib/services/page-service'
 import { useRuntimeStore } from '@/stores/runtime-store'
 import { RuntimeRenderer } from '@/components/runtime/runtime-renderer'
-import { ComponentNode } from '@/types/editor'
+import { PageSchema } from '@/lib/schema/page-schema'
+import { createClient } from '@/lib/supabase/client'
 
 export default function RuntimePage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const pageId = params.pageId as string
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const setPage = useRuntimeStore((state) => state.setPage)
+  const setGlobalContext = useRuntimeStore((state) => state.setGlobalContext)
   const rootId = useRuntimeStore((state) => state.rootId)
 
   useEffect(() => {
-    async function loadPage() {
+    async function initRuntime() {
       try {
         setLoading(true)
-        const page = await PageService.getPage(pageId)
 
+        // 1. Fetch Page & User in parallel
+        const supabase = createClient()
+        const [
+          page,
+          {
+            data: { user },
+          },
+        ] = await Promise.all([PageService.getPage(pageId), supabase.auth.getUser()])
+
+        // 2. Validate & Set Page
         if (page && page.schema) {
-          // Parse schema
-          const schema = page.schema as unknown as {
-            rootId: string
-            components: Record<string, ComponentNode>
+          const parseResult = PageSchema.safeParse(page.schema)
+
+          if (parseResult.success) {
+            const { components, rootId } = parseResult.data
+            setPage(components, rootId)
+
+            // 3. Set Context (User + Params + SearchParams)
+            const searchParamsObj = Object.fromEntries(searchParams.entries())
+            setGlobalContext({
+              user: user || null,
+              params: params,
+              searchParams: searchParamsObj,
+            })
+          } else {
+            console.error('Schema validation failed:', parseResult.error)
+            setError('Invalid page schema')
           }
-          setPage(schema.components, schema.rootId)
         } else {
           setError('Page has no content')
         }
@@ -41,9 +64,9 @@ export default function RuntimePage() {
     }
 
     if (pageId) {
-      loadPage()
+      initRuntime()
     }
-  }, [pageId, setPage])
+  }, [pageId, setPage, setGlobalContext, params, searchParams])
 
   if (loading) {
     return (

@@ -85,6 +85,13 @@ export function RuntimeRenderer({ componentId }: PageRendererProps) {
         </RuntimeForm>
       )
     default:
+      if (process.env.NODE_ENV === 'development') {
+        return (
+          <div className="border border-dashed border-red-500 bg-red-50 p-2 text-xs text-red-500">
+            Unknown Component: {component.type}
+          </div>
+        )
+      }
       return null
   }
 }
