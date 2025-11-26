@@ -28,10 +28,32 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       span: 'text-[#383838]',
     }[tag]
 
+    // Separate text styles (color, font properties) from container styles (background, padding, margin)
+    const textStyle: CSSProperties = {}
+    const containerStyle: CSSProperties = {}
+
+    if (style) {
+      const { color, fontSize, fontWeight, fontStyle, textAlign, ...rest } = style
+      if (color) textStyle.color = color
+      if (fontSize) textStyle.fontSize = fontSize
+      if (fontWeight) textStyle.fontWeight = fontWeight
+      if (fontStyle) textStyle.fontStyle = fontStyle
+      if (textAlign) textStyle.textAlign = textAlign
+      Object.assign(containerStyle, rest)
+    }
+
     return (
-      <Component ref={ref} className={cn(defaultClass, className)} style={style} {...props}>
-        {content || children || 'Text Block'}
-      </Component>
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
+        className="relative"
+        style={containerStyle}
+        {...props}
+      >
+        {children}
+        <Component className={cn(defaultClass, className)} style={textStyle}>
+          {content || 'Text Block'}
+        </Component>
+      </div>
     )
   }
 )
@@ -45,10 +67,12 @@ export interface ButtonComponentProps extends UiButtonProps {
 export const Button = forwardRef<HTMLButtonElement, ButtonComponentProps>(
   ({ label, style, className, children, ...props }, ref) => {
     return (
-      <UiButton ref={ref} className={cn(className)} style={style} {...props}>
-        {label || 'Button'}
+      <div ref={ref as React.Ref<HTMLDivElement>} className="relative inline-block" style={style}>
         {children}
-      </UiButton>
+        <UiButton className={cn(className)} {...props}>
+          {label || 'Button'}
+        </UiButton>
+      </div>
     )
   }
 )

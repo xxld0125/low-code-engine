@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select'
 import { useEditorStore } from '@/stores/editor-store'
 import { PropertyTextarea } from '../property-textarea'
+import { PropertyInput } from '../property-input'
 
 interface TextPropsFormProps {
   component: ComponentNode
@@ -18,6 +19,7 @@ interface TextPropsFormProps {
 
 export function TextPropsForm({ component }: TextPropsFormProps) {
   const updateComponentProps = useEditorStore((state) => state.updateComponentProps)
+  const updateComponentStyle = useEditorStore((state) => state.updateComponentStyle)
 
   const handleChange = (key: string, value: unknown) => {
     updateComponentProps(component.id, { [key]: value })
@@ -63,6 +65,56 @@ export function TextPropsForm({ component }: TextPropsFormProps) {
           Supports template syntax:{' '}
           <code className="rounded bg-gray-100 px-1">{'{{user.name}}'}</code>
         </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="text-color" className="text-xs font-medium">
+            Text Color
+          </Label>
+          <div className="mt-1.5 flex items-center gap-2">
+            <input
+              type="color"
+              id="text-color-picker"
+              value={(component.style.color as string) || '#383838'}
+              onChange={(e) => updateComponentStyle(component.id, { color: e.target.value })}
+              className="h-8 w-8 cursor-pointer rounded border border-gray-200 p-0.5"
+            />
+            <PropertyInput
+              id="text-color"
+              placeholder="#383838"
+              value={(component.style.color as string) || ''}
+              onValueChange={(value) => updateComponentStyle(component.id, { color: value })}
+              className="flex-1 font-mono text-xs"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="bg-color" className="text-xs font-medium">
+            Background
+          </Label>
+          <div className="mt-1.5 flex items-center gap-2">
+            <input
+              type="color"
+              id="bg-color-picker"
+              value={(component.style.backgroundColor as string) || '#ffffff'}
+              onChange={(e) =>
+                updateComponentStyle(component.id, { backgroundColor: e.target.value })
+              }
+              className="h-8 w-8 cursor-pointer rounded border border-gray-200 p-0.5"
+            />
+            <PropertyInput
+              id="bg-color"
+              placeholder="#ffffff"
+              value={(component.style.backgroundColor as string) || ''}
+              onValueChange={(value) =>
+                updateComponentStyle(component.id, { backgroundColor: value })
+              }
+              className="flex-1 font-mono text-xs"
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

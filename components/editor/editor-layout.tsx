@@ -10,7 +10,7 @@ import {
   DragEndEvent,
   defaultDropAnimationSideEffects,
   DropAnimation,
-  closestCenter,
+  pointerWithin,
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useState, useEffect } from 'react'
@@ -88,6 +88,7 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
     const { active, over } = event
     setActiveDragItem(null)
 
+    // If no drop target, do nothing
     if (!over) return
 
     const activeId = active.id as string
@@ -97,6 +98,16 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
 
     // Case 1: Dragging from Sidebar to Canvas
     if (activeData?.isSidebarItem) {
+      // CRITICAL: Only allow drops on canvas (rootId) or existing components
+      // Reject drops on sidebar items (which have IDs like "sidebar-Button")
+      const isDropOnCanvas = overId === rootId
+      const isDropOnComponent = components[overId] !== undefined
+
+      if (!isDropOnCanvas && !isDropOnComponent) {
+        // Dropped on an invalid area (e.g., sidebar, header, etc.)
+        return
+      }
+
       const type = activeData.type
       const newId = crypto.randomUUID()
 
@@ -115,8 +126,6 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
       }
 
       // Determine drop target
-      // If dropped over a component, add as child (if container) or sibling?
-
       const overComponent = components[overId]
       let parentId = overId
 
@@ -125,15 +134,22 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
         if (overId === rootId) {
           parentId = rootId
         } else {
-          return // Unknown drop target
+          // Should not reach here due to the check above, but safety return
+          return
         }
       } else {
+        // Check if dropped on a container
         const isContainer =
           ['Container', 'Grid', 'Flex', 'Form', 'Modal'].includes(overComponent.type) ||
           overId === rootId
-        if (!isContainer && overComponent.parentId) {
+
+        if (isContainer) {
+          parentId = overId
+        } else if (overComponent.parentId) {
+          // If dropped on a non-container, add as sibling
           parentId = overComponent.parentId
-        } else if (!isContainer) {
+        } else {
+          // Should not happen if root is handled, but safety check
           return
         }
       }
@@ -181,7 +197,7 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
     <DndContext
       id="editor-dnd-context"
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

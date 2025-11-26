@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ComponentNode, LayoutStyle } from '@/types/editor'
+import { ComponentNode, LayoutStyle, ActionConfig } from '@/types/editor'
 
 interface EditorState {
   components: Record<string, ComponentNode>
@@ -14,6 +14,7 @@ interface EditorState {
   selectComponent: (id: string | null) => void
   moveComponent: (id: string, newParentId: string, index: number) => void
   reorderChildren: (parentId: string, newChildren: string[]) => void
+  updateComponentActions: (id: string, actions: ActionConfig[]) => void
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -136,6 +137,18 @@ export const useEditorStore = create<EditorState>((set) => ({
           [component.parentId]: { ...oldParent, children: oldChildren },
           [newParentId]: { ...newParent, children: newChildren },
           [id]: { ...component, parentId: newParentId },
+        },
+      }
+    }),
+
+  updateComponentActions: (id, actions) =>
+    set((state) => {
+      const component = state.components[id]
+      if (!component) return state
+      return {
+        components: {
+          ...state.components,
+          [id]: { ...component, actions },
         },
       }
     }),

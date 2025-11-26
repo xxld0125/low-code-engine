@@ -20,7 +20,7 @@ interface EventsTabProps {
 }
 
 export function EventsTab({ component }: EventsTabProps) {
-  const updateComponentProps = useEditorStore((state) => state.updateComponentProps)
+  const updateComponentActions = useEditorStore((state) => state.updateComponentActions)
   const [actions, setActions] = useState<ActionConfig[]>(component.actions || [])
 
   // Sync local state with component actions
@@ -36,13 +36,13 @@ export function EventsTab({ component }: EventsTabProps) {
     }
     const updatedActions = [...actions, newAction]
     setActions(updatedActions)
-    updateComponentProps(component.id, { actions: updatedActions })
+    updateComponentActions(component.id, updatedActions)
   }
 
   const removeAction = (index: number) => {
     const updatedActions = actions.filter((_, i) => i !== index)
     setActions(updatedActions)
-    updateComponentProps(component.id, { actions: updatedActions })
+    updateComponentActions(component.id, updatedActions)
   }
 
   const updateAction = (index: number, updates: Partial<ActionConfig>) => {
@@ -58,7 +58,7 @@ export function EventsTab({ component }: EventsTabProps) {
       return action
     })
     setActions(updatedActions)
-    updateComponentProps(component.id, { actions: updatedActions })
+    updateComponentActions(component.id, updatedActions)
   }
 
   const updatePayload = (index: number, key: string, value: unknown) => {
@@ -72,7 +72,7 @@ export function EventsTab({ component }: EventsTabProps) {
       return action
     })
     setActions(updatedActions)
-    updateComponentProps(component.id, { actions: updatedActions })
+    updateComponentActions(component.id, updatedActions)
   }
 
   const getDefaultPayload = (type: ActionType): ActionConfig['payload'] => {

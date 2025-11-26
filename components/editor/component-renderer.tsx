@@ -9,6 +9,7 @@ import { Container, Modal } from '@/components/renderer/layout-components'
 import { Text, Button } from '@/components/renderer/basic-components'
 import { Table, Form } from '@/components/renderer/data-components'
 import { CSSProperties } from 'react'
+import { X } from 'lucide-react'
 
 interface ComponentRendererProps {
   componentId: string
@@ -18,6 +19,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   const component = useEditorStore((state) => state.components[componentId])
   const selectedId = useEditorStore((state) => state.selectedId)
   const selectComponent = useEditorStore((state) => state.selectComponent)
+  const removeComponent = useEditorStore((state) => state.removeComponent)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: componentId,
@@ -63,10 +65,24 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
     </SortableContext>
   ) : null
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    removeComponent(componentId)
+  }
+
   const selectionLabel = isSelected && (
-    <span className="pointer-events-none absolute -top-5 left-0 z-20 block whitespace-nowrap rounded-t-sm bg-[#16AA98] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-      {component.type}
-    </span>
+    <div className="absolute -top-6 left-0 z-20 flex items-center gap-1 rounded-t-sm bg-[#16AA98] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+      <span>{component.type}</span>
+      <span
+        onClick={handleDelete}
+        className="ml-1 flex cursor-pointer items-center justify-center rounded-full p-0.5 hover:bg-white/20"
+        role="button"
+        tabIndex={0}
+        aria-label="Delete component"
+      >
+        <X className="h-3 w-3" />
+      </span>
+    </div>
   )
 
   const editorClassName = cn(

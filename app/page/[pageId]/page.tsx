@@ -35,6 +35,10 @@ export default function RuntimePage() {
 
         // 2. Validate & Set Page
         if (page && page.schema) {
+          console.log('=== Runtime: Loading schema ===')
+          console.log('Raw schema:', page.schema)
+          console.log('Schema type:', typeof page.schema)
+
           const parseResult = PageSchema.safeParse(page.schema)
 
           if (parseResult.success) {
@@ -50,10 +54,12 @@ export default function RuntimePage() {
             })
           } else {
             console.error('Schema validation failed:', parseResult.error)
-            setError('Invalid page schema')
+            setError(
+              'Invalid page schema. Please save the page in the editor to update it to the new format.'
+            )
           }
         } else {
-          setError('Page has no content')
+          setError('Page has no content. Please edit the page and save it first.')
         }
       } catch (err) {
         console.error('Failed to load page:', err)

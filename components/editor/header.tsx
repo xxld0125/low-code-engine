@@ -14,14 +14,20 @@ interface EditorHeaderProps {
 }
 
 export function EditorHeader({ pageId, pageName }: EditorHeaderProps) {
-  const { components } = useEditorStore()
+  const { components, rootId } = useEditorStore()
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
     setSaving(true)
     try {
+      const schemaToSave = { rootId, components }
+      console.log('=== Saving schema ===')
+      console.log('rootId:', rootId)
+      console.log('components keys:', Object.keys(components))
+      console.log('Full schema:', schemaToSave)
+
       // We need to pass the dictionary of components directly
-      await PageService.updatePageSchema(pageId, components)
+      await PageService.updatePageSchema(pageId, schemaToSave)
       toast.success('Page saved successfully')
     } catch (error) {
       console.error('Failed to save page', error)

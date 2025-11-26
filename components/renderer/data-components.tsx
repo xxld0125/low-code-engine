@@ -23,7 +23,7 @@ export interface TableProps extends BaseProps {
 }
 
 export const Table = forwardRef<HTMLDivElement, TableProps>(
-  ({ tableName, columns, data, style, className, ...props }, ref) => {
+  ({ tableName, columns, data, style, className, children, ...props }, ref) => {
     // Mock data if not provided
     const mockColumns = columns || [
       { accessorKey: 'id', header: 'ID' },
@@ -37,45 +37,43 @@ export const Table = forwardRef<HTMLDivElement, TableProps>(
     ]
 
     return (
-      <div
-        ref={ref}
-        // Admin Style: Border #383838, Sharp corners
-        className={cn('w-full overflow-auto border border-[#383838] bg-white', className)}
-        style={style}
-        {...props}
-      >
-        {/* Table Title Panel */}
-        <div className="border-b border-[#383838] bg-[#F4EFEA] px-4 py-2 text-xs font-bold uppercase text-[#383838]">
-          {tableName || 'Table Component'}
-        </div>
-        <UiTable>
-          <TableHeader>
-            {/* Admin Style: Header Height 40px, Border #383838 */}
-            <TableRow className="border-b border-[#383838] hover:bg-transparent">
-              {mockColumns.map((col) => (
-                <TableHead
-                  key={col.accessorKey}
-                  // Admin Style: 13px text, #383838
-                  className="h-10 text-[13px] font-bold text-[#383838]"
-                >
-                  {col.header}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockData.map((row, i) => (
-              // Admin Style: Row border #383838 (Strict Mode)
-              <TableRow key={i} className="border-b border-[#383838] hover:bg-[#16AA98]/5">
+      <div ref={ref} className={cn('relative', className)} style={style} {...props}>
+        {children}
+        {/* Table Container */}
+        <div className="w-full overflow-auto border border-[#383838] bg-white">
+          {/* Table Title Panel */}
+          <div className="border-b border-[#383838] bg-[#F4EFEA] px-4 py-2 text-xs font-bold uppercase text-[#383838]">
+            {tableName || 'Table Component'}
+          </div>
+          <UiTable>
+            <TableHeader>
+              {/* Admin Style: Header Height 40px, Border #383838 */}
+              <TableRow className="border-b border-[#383838] hover:bg-transparent">
                 {mockColumns.map((col) => (
-                  <TableCell key={col.accessorKey} className="py-2 text-[13px] text-[#383838]">
-                    {row[col.accessorKey] as ReactNode}
-                  </TableCell>
+                  <TableHead
+                    key={col.accessorKey}
+                    // Admin Style: 13px text, #383838
+                    className="h-10 text-[13px] font-bold text-[#383838]"
+                  >
+                    {col.header}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </UiTable>
+            </TableHeader>
+            <TableBody>
+              {mockData.map((row, i) => (
+                // Admin Style: Row border #383838 (Strict Mode)
+                <TableRow key={i} className="border-b border-[#383838] hover:bg-[#16AA98]/5">
+                  {mockColumns.map((col) => (
+                    <TableCell key={col.accessorKey} className="py-2 text-[13px] text-[#383838]">
+                      {row[col.accessorKey] as ReactNode}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </UiTable>
+        </div>
       </div>
     )
   }

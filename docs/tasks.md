@@ -172,7 +172,13 @@
 
 ## Phase 7: 集成与测试 (Integration & Polish)
 
-- [ ] **7.1 [FE] 端到端流程验证：用户管理 CRUD**
+- [/] **7.1 [FE] 端到端流程验证：用户管理 CRUD**
+  - [x] **[修复]** 修复 Phase 7 测试问题 (docs/test/phase_7_test_problem_list_20251126.md)
+    - [x] 修复组件删除功能 (Delete Button)
+    - [x] 修复拖拽无效区域添加组件问题 (Dnd Validation)
+    - [x] 修复文本组件颜色配置 (Text Color)
+    - [x] 修复按钮事件配置不保存问题 (Event Persistence)
+    - [x] 修复预览页 Schema 校验报错 (RootId Save)
   - [ ] 验证场景：创建一个完整的“用户管理”页面。
   - [ ] 步骤：
     1. **页面搭建**：
