@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import { PageService } from '@/lib/services/page-service'
 import { useRuntimeStore } from '@/stores/runtime-store'
@@ -8,7 +8,7 @@ import { RuntimeRenderer } from '@/components/runtime/runtime-renderer'
 import { PageSchema } from '@/lib/schema/page-schema'
 import { createClient } from '@/lib/supabase/client'
 
-export default function RuntimePage() {
+function RuntimePageContent() {
   const params = useParams()
   const searchParams = useSearchParams()
   const pageId = params.pageId as string
@@ -94,5 +94,19 @@ export default function RuntimePage() {
     <div className="min-h-screen w-full bg-white">
       <RuntimeRenderer componentId={rootId} />
     </div>
+  )
+}
+
+export default function RuntimePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen w-full items-center justify-center">
+          <div className="text-lg font-medium text-gray-500">Loading page...</div>
+        </div>
+      }
+    >
+      <RuntimePageContent />
+    </Suspense>
   )
 }

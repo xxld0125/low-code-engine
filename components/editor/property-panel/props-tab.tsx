@@ -31,9 +31,7 @@ export function PropsTab({ component }: PropsTabProps) {
         <div className="text-[11px] font-bold uppercase tracking-wide text-accent">
           {component.type} Properties
         </div>
-        <div className="mt-1 font-mono text-[10px] text-gray-400">
-          ID: {component.id.slice(0, 8)}...
-        </div>
+        <div className="mt-1 font-mono text-[10px] text-gray-400">ID: {component.id}</div>
       </div>
 
       {/* Dynamic Form Based on Component Type */}

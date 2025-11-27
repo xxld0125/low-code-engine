@@ -109,7 +109,20 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
       }
 
       const type = activeData.type
-      const newId = crypto.randomUUID()
+
+      // Generate ID: Type_Index
+      const existingComponents = Object.values(components).filter((c) => c.type === type)
+      let maxIndex = 0
+      existingComponents.forEach((c) => {
+        const parts = c.id.split('_')
+        if (parts.length === 2 && parts[0] === type) {
+          const index = parseInt(parts[1], 10)
+          if (!isNaN(index) && index > maxIndex) {
+            maxIndex = index
+          }
+        }
+      })
+      const newId = `${type}_${maxIndex + 1}`
 
       // Define default props based on type
       const defaultProps: Record<string, unknown> = {}

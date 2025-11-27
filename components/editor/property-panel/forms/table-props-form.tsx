@@ -4,7 +4,7 @@ import { ComponentNode } from '@/types/editor'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useEditorStore } from '@/stores/editor-store'
-import { Plus, Trash2, GripVertical } from 'lucide-react'
+import { Plus, Trash2, GripVertical, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PropertyInput } from '../property-input'
@@ -23,6 +23,7 @@ interface TablePropsFormProps {
 
 export function TablePropsForm({ component }: TablePropsFormProps) {
   const updateComponentProps = useEditorStore((state) => state.updateComponentProps)
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const props = component.props as {
     tableName?: string
@@ -66,6 +67,36 @@ export function TablePropsForm({ component }: TablePropsFormProps) {
     const updatedColumns = columns.map((col, i) => (i === index ? { ...col, ...updates } : col))
     setColumns(updatedColumns)
     updateComponentProps(component.id, { columns: updatedColumns })
+  }
+
+  const autoGenerateColumns = async () => {
+    if (!props.tableName) {
+      alert('Please enter a table name first')
+      return
+    }
+
+    setIsGenerating(true)
+    try {
+      const response = await fetch(`/api/schema/columns?tableName=${props.tableName}`)
+      if (!response.ok) throw new Error('Failed to fetch schema')
+
+      const tableColumns = await response.json()
+
+      const generatedColumns: TableColumn[] = tableColumns.map((col: { column_name: string }) => ({
+        field: col.column_name,
+        header:
+          col.column_name.charAt(0).toUpperCase() + col.column_name.slice(1).replace(/_/g, ' '),
+        visible: true,
+      }))
+
+      setColumns(generatedColumns)
+      updateComponentProps(component.id, { columns: generatedColumns })
+    } catch (error) {
+      console.error('Auto-generate columns error:', error)
+      alert('Failed to auto-generate columns. Please check console for details.')
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -117,9 +148,28 @@ export function TablePropsForm({ component }: TablePropsFormProps) {
           </Button>
         </div>
 
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={autoGenerateColumns}
+          disabled={isGenerating || !props.tableName}
+          aria-label="Auto-generate columns from database schema"
+          className="mb-3 h-7 w-full gap-1 text-xs"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Auto-Fill Columns from DB'
+          )}
+        </Button>
+
         {columns.length === 0 ? (
           <div className="rounded border border-dashed border-gray-300 p-4 text-center text-xs text-gray-500">
-            No columns configured. Click &quot;Add Column&quot; to start.
+            No columns configured.
           </div>
         ) : (
           <div className="space-y-2">

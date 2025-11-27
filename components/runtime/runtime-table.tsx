@@ -46,10 +46,18 @@ export function RuntimeTable({ componentId, tableName, ...props }: RuntimeTableP
     return <div className="text-red-500">Error loading data: {(error as Error).message}</div>
   }
 
+  // Transform editor columns (field) to Table columns (accessorKey)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tableColumns = props.columns?.map((col: any) => ({
+    accessorKey: col.field,
+    header: col.header,
+  }))
+
   return (
     <Table
       tableName={tableName}
       {...props}
+      columns={tableColumns}
       data={data as Record<string, unknown>[]}
       className={isLoading ? 'opacity-50' : ''}
     />

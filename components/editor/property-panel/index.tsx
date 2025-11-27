@@ -1,7 +1,7 @@
 'use client'
 
 import { useEditorStore } from '@/stores/editor-store'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PropsTab } from './props-tab'
 import { StyleTab } from './style-tab'
 import { EventsTab } from './events-tab'
@@ -11,6 +11,13 @@ type TabType = 'props' | 'style' | 'events'
 export function PropertyPanel() {
   const { selectedId, components } = useEditorStore()
   const [activeTab, setActiveTab] = useState<TabType>('props')
+
+  // Reset to props tab when selection changes
+  useEffect(() => {
+    if (selectedId) {
+      setActiveTab('props')
+    }
+  }, [selectedId])
 
   const selectedComponent = selectedId ? components[selectedId] : null
   const hasEvents = selectedComponent && ['Button', 'Form'].includes(selectedComponent.type)

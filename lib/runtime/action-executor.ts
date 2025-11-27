@@ -42,6 +42,7 @@ export function useActionExecutor() {
 
       case ActionType.OPEN_MODAL: {
         const { modalId } = action.payload as { modalId: string }
+        console.log(`ActionExecutor: Opening modal ${modalId}`)
         if (modalId) openModal(modalId)
         break
       }
@@ -58,9 +59,16 @@ export function useActionExecutor() {
         // If this action is triggered by a button OUTSIDE the form, we need a way to submit the form.
         // For now, we assume the button is inside the form or we use an event bus.
         const { formId } = action.payload as { formId?: string }
-        if (formId) {
+        // localContext might contain 'currentFormId' if passed from renderer
+        const targetFormId = formId || (localContext?.currentFormId as string)
+
+        if (targetFormId) {
           // Dispatch a custom event that the form listens to?
-          window.dispatchEvent(new CustomEvent(`form:submit:${formId}`))
+          const eventName = `form:submit:${targetFormId}`
+          window.dispatchEvent(new CustomEvent(eventName))
+        } else {
+          console.warn('[ActionExecutor] SUBMIT_FORM action missing formId and not inside a form')
+          toast.error('Cannot submit form: No form specified')
         }
         break
       }

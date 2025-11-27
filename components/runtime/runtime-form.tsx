@@ -48,7 +48,13 @@ export function RuntimeForm({ componentId, tableName, actions, ...props }: Runti
     const eventName = `form:submit:${componentId}`
     const handleExternalSubmit = () => {
       if (formRef.current) {
-        formRef.current.requestSubmit()
+        try {
+          formRef.current.requestSubmit()
+        } catch (error) {
+          console.error('[RuntimeForm] Failed to request submit:', error)
+        }
+      } else {
+        console.warn('[RuntimeForm] formRef is null')
       }
     }
 

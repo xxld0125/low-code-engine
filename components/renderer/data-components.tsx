@@ -64,11 +64,23 @@ export const Table = forwardRef<HTMLDivElement, TableProps>(
               {mockData.map((row, i) => (
                 // Admin Style: Row border #383838 (Strict Mode)
                 <TableRow key={i} className="border-b border-[#383838] hover:bg-[#16AA98]/5">
-                  {mockColumns.map((col) => (
-                    <TableCell key={col.accessorKey} className="py-2 text-[13px] text-[#383838]">
-                      {row[col.accessorKey] as ReactNode}
-                    </TableCell>
-                  ))}
+                  {mockColumns.map((col) => {
+                    const cellValue = row[col.accessorKey]
+                    let displayValue = cellValue as ReactNode
+
+                    // Handle boolean values specifically
+                    if (typeof cellValue === 'boolean') {
+                      displayValue = String(cellValue) // "true" or "false"
+                    } else if (cellValue === null || cellValue === undefined) {
+                      displayValue = ''
+                    }
+
+                    return (
+                      <TableCell key={col.accessorKey} className="py-2 text-[13px] text-[#383838]">
+                        {displayValue}
+                      </TableCell>
+                    )
+                  })}
                 </TableRow>
               ))}
             </TableBody>
@@ -82,7 +94,7 @@ Table.displayName = 'Table'
 
 export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   tableName?: string
-  fields?: Array<{ name: string; label: string; type: string }>
+  fields?: Array<{ name: string; label: string; type: string; required?: boolean }>
   children?: ReactNode
 }
 
@@ -91,8 +103,8 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
     const hasFields = fields && fields.length > 0
     const mockFields = !hasFields
       ? [
-          { name: 'name', label: 'Name', type: 'text' },
-          { name: 'email', label: 'Email', type: 'email' },
+          { name: 'name', label: 'Name', type: 'text', required: true },
+          { name: 'email', label: 'Email', type: 'email', required: true },
         ]
       : fields
 
@@ -110,12 +122,16 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
           {(mockFields || []).map((field) => (
             <div key={field.name} className="space-y-1.5">
               {/* Admin Style: Label 12px */}
-              <Label className="text-[12px] font-medium text-[#383838]">{field.label}</Label>
+              <Label className="text-[12px] font-medium text-[#383838]">
+                {field.label}
+                {field.required && <span className="ml-1 text-red-500">*</span>}
+              </Label>
               {/* Admin Style: Input Border #383838 is handled in Input component or verify below */}
               <Input
                 name={field.name}
                 placeholder={`Enter ${field.label}`}
                 type={field.type}
+                required={field.required}
                 className="border-[#383838]"
               />
             </div>

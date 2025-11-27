@@ -8,6 +8,7 @@ import { Text, Button } from '@/components/renderer/basic-components'
 import { RuntimeTable } from './runtime-table'
 import { RuntimeForm } from './runtime-form'
 import { CSSProperties } from 'react'
+import { FormProvider, useFormContext } from './form-context'
 
 interface PageRendererProps {
   componentId: string
@@ -19,6 +20,7 @@ export function RuntimeRenderer({ componentId }: PageRendererProps) {
   const openModals = useRuntimeStore((state) => state.openModals)
   const closeModal = useRuntimeStore((state) => state.closeModal)
   const { executeAction } = useActionExecutor()
+  const { formId: currentFormId } = useFormContext()
 
   if (!component) return null
 
@@ -32,11 +34,15 @@ export function RuntimeRenderer({ componentId }: PageRendererProps) {
     // But here we are on a Button component.
     // If we have actions, we might want to stop propagation or prevent default depending on logic.
     // For now, let's just execute actions.
-    if (component.actions) {
-      e.stopPropagation()
+    if (component.actions && component.actions.length > 0) {
       const clickActions = component.actions.filter((a) => a.trigger === 'onClick')
-      for (const action of clickActions) {
-        await executeAction(action)
+      if (clickActions.length > 0) {
+        e.stopPropagation()
+        e.preventDefault() // Prevent default form submission or navigation
+        for (const action of clickActions) {
+          // Pass currentFormId to action executor so it can fallback to it if formId is missing
+          await executeAction(action, { currentFormId })
+        }
       }
     }
   }
@@ -61,14 +67,28 @@ export function RuntimeRenderer({ componentId }: PageRendererProps) {
       // Only render if open
       if (!openModals.includes(componentId)) return null
       return (
-        <Modal {...commonProps}>
-          {renderChildren()}
+        <Modal {...commonProps} isOverlay={true}>
+          {/* Close Button specific to Runtime Modal */}
           <div
-            className="absolute right-2 top-2 cursor-pointer font-bold text-gray-500 hover:text-gray-700"
+            className="absolute right-4 top-4 cursor-pointer p-1 text-gray-400 transition-colors hover:text-[#383838]"
             onClick={() => closeModal(componentId)}
+            title="Close"
           >
-            ✕
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </div>
+          {renderChildren()}
         </Modal>
       )
     case 'Text':
@@ -79,10 +99,13 @@ export function RuntimeRenderer({ componentId }: PageRendererProps) {
       return <RuntimeTable componentId={componentId} {...commonProps} />
     case 'Form':
       // Form passes children through to be rendered inside the form tag
+      // WRAP with FormProvider so children know they are in this form
       return (
-        <RuntimeForm componentId={componentId} actions={component.actions} {...commonProps}>
-          {renderChildren()}
-        </RuntimeForm>
+        <FormProvider value={{ formId: componentId }}>
+          <RuntimeForm componentId={componentId} actions={component.actions} {...commonProps}>
+            {renderChildren()}
+          </RuntimeForm>
+        </FormProvider>
       )
     default:
       if (process.env.NODE_ENV === 'development') {

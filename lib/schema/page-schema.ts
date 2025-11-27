@@ -14,11 +14,11 @@ const ActionTypeEnum = z.enum([
 ])
 
 const ActionPayloadSchema = z.union([
-  z.object({ modalId: z.string() }),
-  z.object({ url: z.string() }),
-  z.object({ type: z.enum(['success', 'error', 'info']), message: z.string() }),
-  z.object({ tableId: z.string().optional() }),
-  z.object({ formId: z.string().optional() }),
+  z.object({ modalId: z.string() }).strict(),
+  z.object({ url: z.string() }).strict(),
+  z.object({ type: z.enum(['success', 'error', 'info']), message: z.string() }).strict(),
+  z.object({ tableId: z.string().optional() }).strict(),
+  z.object({ formId: z.string().optional() }).strict(),
   z.record(z.string(), z.unknown()),
 ])
 

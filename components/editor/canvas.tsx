@@ -38,13 +38,13 @@ export function Canvas() {
       <div
         ref={setNodeRef}
         className={cn(
-          'min-h-[800px] w-full max-w-[800px] bg-white shadow-sm transition-colors',
+          'w-full max-w-[800px] bg-white shadow-sm transition-colors',
           isOver && 'ring-2 ring-[#16AA98] ring-opacity-50'
         )}
       >
         {rootComponent && (
           <SortableContext items={rootComponent.children} strategy={verticalListSortingStrategy}>
-            <div className="flex h-full min-h-[800px] flex-col gap-2 p-8">
+            <div className="flex min-h-[800px] w-full flex-col gap-2 p-8">
               {rootComponent.children.map((childId) => (
                 <ComponentRenderer key={childId} componentId={childId} />
               ))}
