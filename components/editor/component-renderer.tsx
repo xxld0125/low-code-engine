@@ -39,6 +39,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
+    e.preventDefault()
     selectComponent(componentId)
   }
 
@@ -105,7 +106,9 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   }
 
   // Props from component state
-  const componentProps = component.props || {}
+  // Filter out event handlers (like onClick) to prevent them from firing in the editor
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { onClick: _userOnClick, ...componentProps } = component.props || {}
 
   switch (component.type) {
     case 'Container':

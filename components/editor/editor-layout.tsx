@@ -12,7 +12,6 @@ import {
   DropAnimation,
   pointerWithin,
 } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
 import { useState, useEffect } from 'react'
 import { LeftSidebar } from './left-sidebar'
 import { RightPanel } from './right-panel'
@@ -64,7 +63,7 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
     setMounted(true)
   }, [])
 
-  const { addComponent, reorderChildren, components, rootId } = useEditorStore()
+  const { addComponent, moveComponent, components, rootId } = useEditorStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -171,27 +170,38 @@ export function EditorLayout({ pageId, pageName }: EditorLayoutProps) {
       return
     }
 
-    // Case 2: Reordering existing components (sortable)
+    // Case 2: Reordering or Moving existing components
     if (activeId !== overId) {
       const activeComponent = components[activeId]
       const overComponent = components[overId]
 
       if (!activeComponent || !overComponent) return
 
-      // Only allow reordering if they have the same parent
-      if (activeComponent.parentId === overComponent.parentId) {
-        const parent = components[activeComponent.parentId!]
-        if (!parent) return
+      // Check for circular reference (trying to drop parent into child)
+      let currentId: string | null = overId
+      while (currentId) {
+        if (currentId === activeId) return // Cannot drop into itself or its children
+        currentId = components[currentId]?.parentId || null
+      }
 
-        const oldIndex = parent.children.indexOf(activeId)
+      const isOverContainer =
+        ['Container', 'Grid', 'Flex', 'Form', 'Modal'].includes(overComponent.type) ||
+        overId === rootId
+
+      // Scenario 1: Dropping onto a container (Reparenting to end of container)
+      // But only if it's NOT the current parent (unless we want to move to end?)
+      // And not if we are reordering siblings where overComponent IS a container
+      // Sidebar logic prioritizes container drop. We will do the same.
+      if (isOverContainer) {
+        moveComponent(activeId, overId, overComponent.children.length)
+        return
+      }
+
+      // Scenario 2: Dropping onto a component (sibling reference)
+      if (overComponent.parentId) {
+        const parent = components[overComponent.parentId]
         const newIndex = parent.children.indexOf(overId)
-
-        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-          // Use arrayMove to get the correct new order
-          const newChildren = arrayMove(parent.children, oldIndex, newIndex)
-          // Update the store with the new children order
-          reorderChildren(activeComponent.parentId!, newChildren)
-        }
+        moveComponent(activeId, overComponent.parentId, newIndex)
       }
     }
   }
