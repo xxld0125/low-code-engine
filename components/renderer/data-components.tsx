@@ -18,14 +18,20 @@ interface BaseProps extends HTMLAttributes<HTMLDivElement> {
 
 export interface TableProps extends BaseProps {
   tableName?: string
-  columns?: Array<{ accessorKey: string; header: string }>
+  columns?: Array<{ accessorKey?: string; field?: string; header: string }>
   data?: Record<string, unknown>[]
 }
 
 export const Table = forwardRef<HTMLDivElement, TableProps>(
   ({ tableName, columns, data, style, className, children, ...props }, ref) => {
+    // Normalize columns to ensure accessorKey exists (support 'field' from editor)
+    const normalizedColumns = columns?.map((col) => ({
+      ...col,
+      accessorKey: col.accessorKey || col.field || '',
+    }))
+
     // Mock data if not provided
-    const mockColumns = columns || [
+    const mockColumns = normalizedColumns || [
       { accessorKey: 'id', header: 'ID' },
       { accessorKey: 'name', header: 'Name' },
       { accessorKey: 'created_at', header: 'Created At' },
@@ -76,7 +82,10 @@ export const Table = forwardRef<HTMLDivElement, TableProps>(
                     }
 
                     return (
-                      <TableCell key={col.accessorKey} className="py-2 text-[13px] text-[#383838]">
+                      <TableCell
+                        key={`${i}-${col.accessorKey}`}
+                        className="py-2 text-[13px] text-[#383838]"
+                      >
                         {displayValue}
                       </TableCell>
                     )
