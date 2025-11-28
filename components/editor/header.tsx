@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Eye, Save, Undo, Redo, Monitor } from 'lucide-react'
+import { Eye, Save, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEditorStore } from '@/stores/editor-store'
 import { PageService } from '@/lib/services/page-service'
@@ -60,25 +60,6 @@ export function EditorHeader({ pageId, pageName }: EditorHeaderProps) {
       </div>
 
       <div className="flex items-center gap-2 rounded border border-[#e0e0e0] bg-[#f5f5f5] p-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          disabled
-          title="Undo (Not implemented)"
-        >
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          disabled
-          title="Redo (Not implemented)"
-        >
-          <Redo className="h-4 w-4" />
-        </Button>
-        <div className="mx-1 h-4 w-[1px] bg-[#ccc]" />
         <div className="flex items-center gap-1 px-2 text-xs text-[#888]">
           <Monitor className="h-3 w-3" />
           Desktop Mode (1280px+)
