@@ -27,10 +27,23 @@
 - Next.js App Router 路由结构
 - Zustand Store 状态管理设计
 - 拖拽实现逻辑 (dnd-kit)
+  - 智能插入点算法
+  - DragDropContext 全局状态管理
+  - 自定义 Modifiers（居中对齐优化）
 - 组件树渲染策略
+- 自定义 Hooks
+  - `useUnsavedChangesWarning`: 未保存更改提醒
 
 ## 5. [组件 Schema 设计](./tech/schema.md)
 
 - `ComponentNode` 数据结构
 - 核心组件 Props 定义 (Table, Form, etc.)
 - 交互动作枚举 (ActionType)
+
+## 6. [拖拽系统重构](./tech/drag-drop-system-refactor.md)
+
+- 问题背景与根因分析
+- 智能插入点算法设计
+- 混合碰撞检测方案（event.over + elementsFromPoint）
+- 视觉反馈优化（静态原位 + 仅指示器预览）
+- 历史方案对比与演进过程

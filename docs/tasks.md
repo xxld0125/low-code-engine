@@ -94,6 +94,12 @@
   - [x] 实现 `SidebarItem` (Draggable)：允许从侧边栏拖出组件。
   - [x] 实现 `CanvasDroppable`：允许组件放置到画布。
   - [x] 实现画布内排序逻辑 (Sortable)。
+  - [x] **[优化]** 拖拽体验优化 (2025-12-01)：
+    - [x] 添加自定义 `snapSidebarItemToCursor` modifier，使侧边栏拖拽预览居中对齐鼠标。
+    - [x] 移除侧边栏组件拖拽时的 `transform`，保持原位不动。
+    - [x] 禁用画布内组件的 `transform`，防止拖拽时组件跟随移动和下方组件位移。
+    - [x] 保留 DragOverlay（绿色标签）和 DropIndicator（绿色线）作为唯一视觉反馈。
+    - [x] 创建 `drag-drop-context.tsx` 和 `drop-indicator.tsx` 实现全局拖拽状态管理。
 
 - [x] **3.3 [FE] 画布渲染器**
   - [x] 实现 `ComponentRenderer`：递归渲染组件树。
@@ -171,6 +177,14 @@
   - [x] 实现 UI 交互：弹窗控制、Toast 提示 (Sonner)、路由跳转。
 
 ## Phase 7: 集成与测试 (Integration & Polish)
+
+- [x] **7.0 [FE] 数据保护与用户体验优化 (2025-12-01)**
+  - [x] 实现未保存更改提醒功能：
+    - [x] 创建 `useUnsavedChangesWarning` hook，监听 `beforeunload` 事件。
+    - [x] 整合 `editor-store` 的 `isDirty` 状态管理。
+    - [x] 在 `EditorLayout` 中启用未保存更改监听。
+    - [x] 所有修改操作（addComponent、removeComponent、updateComponentProps 等）正确设置 `isDirty`。
+    - [x] Save 按钮成功后重置 `isDirty` 状态。
 
 - [/] **7.1 [FE] 端到端流程验证：用户管理 CRUD**
   - [x] **[修复]** 修复 Phase 7 测试问题 (docs/test/phase_7_test_problem_list_20251126.md)

@@ -32,21 +32,20 @@ interface EditorState {
   // 2. 选中状态
   selectedId: string | null // 当前选中的组件 ID
 
-  // 3. 拖拽状态
-  draggedId: string | null // 当前正在拖拽的组件 ID
-
-  // 4. 剪贴板
-  clipboard: ComponentNode | null // 复制的组件数据
+  // 3. 保存状态
+  isDirty: boolean // 是否有未保存的更改
 
   // Actions
+  setComponents: (components: Record<string, ComponentNode>) => void
+  setIsDirty: (isDirty: boolean) => void
   addComponent: (parentId: string, component: ComponentNode, index?: number) => void
   removeComponent: (id: string) => void
-  updateComponentProps: (id: string, props: Partial<ComponentNode['props']>) => void
-  updateComponentStyle: (id: string, style: Partial<ComponentNode['style']>) => void
+  updateComponentProps: (id: string, props: Record<string, unknown>) => void
+  updateComponentStyle: (id: string, style: LayoutStyle) => void
   selectComponent: (id: string | null) => void
-  moveComponent: (dragId: string, targetId: string, position: 'before' | 'after' | 'inside') => void
-  copyComponent: (id: string) => void
-  pasteComponent: (parentId: string) => void
+  moveComponent: (id: string, newParentId: string, index: number) => void
+  reorderChildren: (parentId: string, newChildren: string[]) => void
+  updateComponentActions: (id: string, actions: ActionConfig[]) => void
 }
 ```
 
@@ -60,10 +59,47 @@ interface EditorState {
     - 侧边栏 Item 使用 `useDraggable`。
     - 画布容器使用 `useDroppable`。
     - `onDragEnd` 检测是否拖入有效区域，若是则调用 `addComponent`。
+    - **优化**：使用自定义 `snapSidebarItemToCursor` modifier，使 DragOverlay 居中对齐鼠标。
+    - **优化**：移除侧边栏组件的 `transform`，拖拽时原位不动，仅显示半透明状态。
 2.  **画布内排序**:
-    - 画布内组件同时使用 `useDraggable` 和 `useDroppable` (或 `SortableContext`)。
-    - `onDragOver` 实时计算插入位置指示线。
+    - 画布内组件使用 `useSortable`。
+    - `onDragOver` 实时计算插入位置，使用 `elementsFromPoint` 增强碰撞检测。
     - `onDragEnd` 调用 `moveComponent` 更新树结构。
+    - **优化**：禁用组件的 `transform`，拖拽时保持原位不动，避免 Layout Shift。
+    - **视觉反馈**：通过 `DragOverlay`（绿色标签）和 `DropIndicator`（绿色线）提供统一的拖拽反馈。
+
+#### 3.1.1 拖拽状态管理 (DragDropContext)
+
+全局拖拽状态通过 `DragDropProvider` 管理：
+
+```typescript
+// components/editor/drag-drop-context.tsx
+interface DropTargetState {
+  type: 'container' | 'insertion-point' // 放入容器 or 插入两组件之间
+  targetId: string // 目标组件 ID
+  position?: 'before' | 'after' // 插入位置（仅 insertion-point）
+  indicatorRect: IndicatorRect // DropIndicator 渲染坐标
+}
+
+interface DragDropContextValue {
+  dropTarget: DropTargetState | null
+  setDropTarget: (target: DropTargetState | null) => void
+  isDragging: boolean
+  setIsDragging: (dragging: boolean) => void
+  mousePosition: { x: number; y: number }
+}
+```
+
+#### 3.1.2 智能插入点算法 (findClosestInsertionPoint)
+
+基于 `event.over` 和 `elementsFromPoint` 的混合方案：
+
+1. **边缘检测**：鼠标在组件边缘（12px）时，判定为"插入前/后"。
+2. **中心区域**：鼠标在组件中心时，判定为"放入容器内部"。
+3. **父级提升**：鼠标在非容器组件中心时，自动提升到父容器。
+4. **循环引用检测**：禁止将组件移动到其自身的后代节点内。
+
+详见 `docs/tech/drag-drop-system-refactor.md` 完整设计文档。
 
 ### 3.2 组件树渲染
 
@@ -148,3 +184,49 @@ function deleteRecursive(nodeId: string, state: EditorState) {
     - 将返回的列定义转换为 `FormField` 对象列表。
     - **快照式更新**: 将生成的字段列表**覆盖**当前组件的 `fields` 属性。
 3.  **后续编辑**: 生成后，用户可以自由修改、排序或删除字段，与原始 Schema 解耦。
+
+### 4.4 未保存更改提醒 (Unsaved Changes Warning)
+
+保护用户数据，防止意外丢失编辑内容。
+
+#### 实现方案
+
+1. **状态管理 (EditorStore)**：
+
+   ```typescript
+   interface EditorState {
+     isDirty: boolean // 是否有未保存更改
+     setIsDirty: (isDirty: boolean) => void
+   }
+   ```
+
+2. **自动标记**：所有修改操作（addComponent、removeComponent、updateComponentProps、updateComponentStyle、moveComponent、updateComponentActions）执行后自动设置 `isDirty: true`。
+
+3. **自动清除**：
+   - `setComponents`（加载页面数据）时设置 `isDirty: false`。
+   - Save 按钮成功后调用 `setIsDirty(false)`。
+
+4. **浏览器事件监听**：
+
+   ```typescript
+   // hooks/use-unsaved-changes-warning.ts
+   export function useUnsavedChangesWarning(isDirty: boolean) {
+     useEffect(() => {
+       const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+         if (isDirty) {
+           event.preventDefault()
+           event.returnValue = '' // 触发浏览器默认确认对话框
+         }
+       }
+       window.addEventListener('beforeunload', handleBeforeUnload)
+       return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+     }, [isDirty])
+   }
+   ```
+
+5. **集成到编辑器**：在 `EditorLayout` 中使用 `useUnsavedChangesWarning(isDirty)` 启用监听。
+
+#### 用户体验
+
+- **有未保存更改**：刷新/关闭页面时，浏览器弹出标准确认对话框："确定要离开此页面吗？您所做的更改可能不会保存。"
+- **已保存**：正常刷新，无提示。
