@@ -338,6 +338,7 @@ const findClosestInsertionPoint = () => {
    - 第二个选择器的 CSS 转义可能不正确
 
 4. **完全丢弃了 dnd-kit 的碰撞检测结果**：
+
    ```typescript
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    (_event: DragOverEvent): DropTargetState | null => {
@@ -409,6 +410,45 @@ const findClosestInsertionPoint = (event: DragOverEvent) => {
 
 **实现状态**：待实现
 
+### 4.9 方案九：静态原位 + 仅指示器预览（最终采用）
+
+**问题**：在画布内拖拽组件时，dnd-kit 默认的 `Sortable` 行为会导致：
+
+1. 被拖拽的组件生成一个跟随鼠标的“鬼影”
+2. 原位置保留占位符
+3. 随着鼠标移动，dnd-kit 会尝试自动排序，导致周围的组件频繁发生位移（Layout Shift）
+4. 这种位移会导致 `DropIndicator`（绿色横线）和组件实际预览位置不一致，造成视觉困扰
+
+**解决方案**：
+
+1. **保留 DragOverlay**：始终显示绿色的胶囊标签（`TEXT 1 X`）跟随鼠标，明确当前拖拽的对象。
+2. **保留 DropIndicator**：始终显示绿色的横线或边框，指示松手后的确切位置。
+3. **静止被拖拽组件**：
+   - 在 `ComponentRenderer` 中，当 `isDragging` 为 true 时，**移除** `transform` 和 `transition`。
+   - 设置 `opacity-50` 以指示该组件正在被操作。
+   - **结果**：组件在视觉上留在原地不动，不会跟随鼠标，也不会挤占下方组件的位置。用户完全依赖 `DropIndicator` 来判断放置位置。
+
+**代码修改**：
+
+```typescript
+// components/editor/component-renderer.tsx
+const style = {
+  // 关键：拖拽时不应用 transform，防止组件位移
+  transform: isDragging ? undefined : CSS.Translate.toString(transform),
+  transition,
+  ...component.style,
+}
+
+// 样式处理
+const editorClassName = cn(
+  // ...
+  isDragging && 'opacity-50' // 仅做半透明处理，不隐藏
+  // ...
+)
+```
+
+**效果**：完美解决了预览位置不一致和下方组件抖动的问题，体验最稳定。
+
 ## 5. 新增文件
 
 | 文件路径                                  | 说明                                     |
@@ -421,7 +461,7 @@ const findClosestInsertionPoint = (event: DragOverEvent) => {
 | 文件路径                                    | 修改内容                                            |
 | ------------------------------------------- | --------------------------------------------------- |
 | `components/editor/editor-layout.tsx`       | 重写拖拽逻辑，引入 `findClosestInsertionPoint` 算法 |
-| `components/editor/component-renderer.tsx`  | 添加 `data-component-id` 属性，调整容器最小高度     |
+| `components/editor/component-renderer.tsx`  | 优化拖拽视觉表现，禁用拖拽位移，调整容器最小高度    |
 | `components/renderer/layout-components.tsx` | 调整 Container 默认样式                             |
 | `components/editor/header.tsx`              | 移除未使用的 Undo/Redo 图标导入                     |
 
@@ -434,20 +474,16 @@ const findClosestInsertionPoint = (event: DragOverEvent) => {
 - [x] findClosestInsertionPoint 核心算法
 - [x] 边缘检测阈值优化
 - [x] 容器最小高度增加
-- [x] 拖拽源视觉优化（小胶囊）
+- [x] 拖拽源视觉优化（小胶囊 + 自定义 Modifier 居中）
 - [x] 父级提升逻辑
 - [x] 占位符尺寸优化
-- [x] 方案六：Multi-Container 模式（已尝试，存在问题）
-- [x] 方案七：完全绕过碰撞检测（已尝试，存在问题）
-
-**进行中**：
-
-- [ ] 方案八：混合方案（event.over + elementsFromPoint 增强）
+- [x] 方案九：静态原位 + 仅指示器预览（已验证，体验最佳）
 
 **已验证无效的方案**：
 
 - 方案六（Multi-Container 模式）：ref 合并冲突，碰撞检测无法识别容器 droppable
 - 方案七（纯 elementsFromPoint）：DragOverlay 遮挡、root 无 data-component-id、完全丢弃 event.over 导致基本拖拽失效
+- 方案八（混合方案）：虽然逻辑正确，但 dnd-kit 的自动排序行为仍会导致视觉抖动
 
 ## 8. 调试日志分析
 
@@ -507,4 +543,4 @@ DragOver: {
 ---
 
 _文档创建时间：2025-11-28_
-_最后更新：2025-11-28_
+_最后更新：2025-12-01_

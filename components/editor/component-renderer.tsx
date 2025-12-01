@@ -3,7 +3,6 @@
 import { useEditorStore } from '@/stores/editor-store'
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Container, Modal } from '@/components/renderer/layout-components'
 import { Text, Button } from '@/components/renderer/basic-components'
@@ -21,7 +20,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
   const selectComponent = useEditorStore((state) => state.selectComponent)
   const removeComponent = useEditorStore((state) => state.removeComponent)
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({
     id: componentId,
     data: {
       type: component?.type,
@@ -31,9 +30,8 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
 
   if (!component) return null
 
+  // 不应用 transform 和 transition，避免拖拽时的自动排序和位移效果
   const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
     ...component.style, // Apply user defined styles
   }
 
@@ -73,7 +71,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
 
   const selectionLabel = isSelected && (
     <div className="absolute -top-6 left-0 z-20 flex items-center gap-1 rounded-t-sm bg-[#16AA98] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-      <span>{component.type}</span>
+      <span>{componentId}</span>
       <span
         onClick={handleDelete}
         className="ml-1 flex cursor-pointer items-center justify-center rounded-full p-0.5 hover:bg-white/20"
@@ -103,6 +101,7 @@ export function ComponentRenderer({ componentId }: ComponentRendererProps) {
     ...attributes,
     ...listeners,
     className: editorClassName,
+    'data-component-id': componentId, // 用于 elementsFromPoint 查找
   }
 
   // Props from component state

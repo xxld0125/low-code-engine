@@ -37,6 +37,7 @@ export function Canvas() {
     >
       <div
         ref={setNodeRef}
+        data-component-id={rootId}
         className={cn(
           'w-full max-w-[800px] bg-white shadow-sm transition-colors',
           isOver && 'ring-2 ring-[#16AA98] ring-opacity-50'

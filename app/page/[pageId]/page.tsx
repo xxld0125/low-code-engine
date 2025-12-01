@@ -7,6 +7,7 @@ import { useRuntimeStore } from '@/stores/runtime-store'
 import { RuntimeRenderer } from '@/components/runtime/runtime-renderer'
 import { PageSchema } from '@/lib/schema/page-schema'
 import { createClient } from '@/lib/supabase/client'
+import { ComponentNode } from '@/types/editor'
 
 function RuntimePageContent() {
   const params = useParams()
@@ -43,7 +44,7 @@ function RuntimePageContent() {
 
           if (parseResult.success) {
             const { components, rootId } = parseResult.data
-            setPage(components, rootId)
+            setPage(components as Record<string, ComponentNode>, rootId)
 
             // 3. Set Context (User + Params + SearchParams)
             const searchParamsObj = Object.fromEntries(searchParams.entries())

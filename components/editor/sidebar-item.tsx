@@ -11,7 +11,7 @@ interface SidebarItemProps {
 }
 
 export function SidebarItem({ type, icon: Icon, label }: SidebarItemProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `sidebar-${type}`,
     data: {
       type,
@@ -19,16 +19,12 @@ export function SidebarItem({ type, icon: Icon, label }: SidebarItemProps) {
     },
   })
 
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
-    : undefined
+  // 不应用 transform 到原始元素，让它保持不动
+  // 拖拽预览通过 DragOverlay 在 editor-layout.tsx 中显示
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...listeners}
       {...attributes}
       className={cn(

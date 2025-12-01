@@ -14,7 +14,7 @@ interface EditorHeaderProps {
 }
 
 export function EditorHeader({ pageId, pageName }: EditorHeaderProps) {
-  const { components, rootId } = useEditorStore()
+  const { components, rootId, setIsDirty } = useEditorStore()
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
@@ -28,6 +28,7 @@ export function EditorHeader({ pageId, pageName }: EditorHeaderProps) {
 
       // We need to pass the dictionary of components directly
       await PageService.updatePageSchema(pageId, schemaToSave)
+      setIsDirty(false) // Reset dirty state after successful save
       toast.success('Page saved successfully')
     } catch (error) {
       console.error('Failed to save page', error)

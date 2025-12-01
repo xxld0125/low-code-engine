@@ -5,8 +5,10 @@ interface EditorState {
   components: Record<string, ComponentNode>
   rootId: string
   selectedId: string | null
+  isDirty: boolean
 
   setComponents: (components: Record<string, ComponentNode>) => void
+  setIsDirty: (isDirty: boolean) => void
   addComponent: (parentId: string, component: ComponentNode, index?: number) => void
   removeComponent: (id: string) => void
   updateComponentProps: (id: string, props: Record<string, unknown>) => void
@@ -21,8 +23,10 @@ export const useEditorStore = create<EditorState>((set) => ({
   components: {},
   rootId: 'root',
   selectedId: null,
+  isDirty: false,
 
-  setComponents: (components) => set({ components }),
+  setComponents: (components) => set({ components, isDirty: false }),
+  setIsDirty: (isDirty) => set({ isDirty }),
 
   addComponent: (parentId, component, index) =>
     set((state) => {
@@ -37,6 +41,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       }
 
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [parentId]: { ...parent, children: newChildren },
@@ -61,6 +66,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       delete remainingComponents[id]
 
       return {
+        isDirty: true,
         components: {
           ...remainingComponents,
           [component.parentId]: { ...parent, children: newChildren },
@@ -74,6 +80,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       const component = state.components[id]
       if (!component) return state
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [id]: { ...component, props: { ...component.props, ...props } },
@@ -86,6 +93,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       const component = state.components[id]
       if (!component) return state
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [id]: { ...component, style: { ...component.style, ...style } },
@@ -119,6 +127,7 @@ export const useEditorStore = create<EditorState>((set) => ({
         newChildren.splice(index, 0, id)
 
         return {
+          isDirty: true,
           components: {
             ...state.components,
             [newParentId]: { ...newParent, children: newChildren },
@@ -132,6 +141,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       newChildren.splice(index, 0, id)
 
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [component.parentId]: { ...oldParent, children: oldChildren },
@@ -146,6 +156,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       const component = state.components[id]
       if (!component) return state
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [id]: { ...component, actions },
@@ -159,6 +170,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       if (!parent) return state
 
       return {
+        isDirty: true,
         components: {
           ...state.components,
           [parentId]: { ...parent, children: newChildren },

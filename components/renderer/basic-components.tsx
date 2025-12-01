@@ -24,7 +24,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       // H3: 16px, weight 500
       h3: 'text-base font-medium tracking-tight text-[#383838]',
       // Body: 13px/14px
-      p: 'text-[13px] leading-normal text-[#383838] [&:not(:first-child)]:mt-2',
+      p: 'text-[13px] leading-normal text-[#383838]',
       span: 'text-[#383838]',
     }[tag]
 
