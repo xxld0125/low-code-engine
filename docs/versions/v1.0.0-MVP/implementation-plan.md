@@ -13,7 +13,7 @@
   - [x] 初始化 `shadcn/ui` 并配置 `components.json`。
 
 - [x] **1.2 [FE] 样式系统配置 (Admin Style Adaptation)**
-  - [x] 参考 `docs/DesignStyleGuide.md` 和 `docs/design/admin_style_adaptation.md` 配置 `tailwind.config.ts`。
+  - [x] 参考 `docs/design/style-guide.md` 和 `docs/design/admin_style_adaptation.md` 配置 `tailwind.config.ts`。
     - [x] 扩展颜色系统：`primary` (#383838), `background` (#F4EFEA), `accent` (#16AA98)。
     - [x] 扩展字体大小：添加 `13px` 支持。
     - [x] 配置默认圆角为 `0px` (Sharp corners)。
@@ -55,7 +55,7 @@
     - [x] `fetchTableData`, `insertRecord`, `updateRecord`, `deleteRecord`。
 
 - [x] **2.2 [FE] EditorStore Implementation (Zustand)**
-  - [x] 定义 `ComponentNode` 和 `EditorState` 类型 (参考 `docs/tech/schema.md` & `frontend.md`)。
+  - [x] 定义 `ComponentNode` 和 `EditorState` 类型 (参考 `docs/development/core/dsl-schema.md` & `docs/development/frontend/architecture.md`)。
   - [x] 创建 `stores/editor-store.ts`。
   - [x] 实现核心 Actions：
     - [x] `addComponent`: 节点插入逻辑。

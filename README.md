@@ -178,11 +178,17 @@ low-code-engine/
 
 ### 📚 文档
 
-- [产品需求文档 (PRD)](./docs/prd.md)
-- [技术设计文档](./docs/tech_design.md)
-- [开发任务清单](./docs/tasks.md)
-- [拖拽系统重构](./docs/tech/drag-drop-system-refactor.md)
-- [设计规范](./docs/DesignStyleGuide.md)
+- [📖 文档中心](./docs/) - 所有文档的导航入口
+- [🚀 快速开始](./docs/user-guide/getting-started.md) - 5分钟快速上手
+- [📋 产品路线图](./docs/product/roadmap.md) - 产品发展规划
+- [🏗️ 系统架构](./docs/development/architecture.md) - 技术架构设计
+- [🔧 API 文档](./docs/development/api/api.md) - 接口文档
+- [📖 用户手册](./docs/user-guide/user-manual.md) - 详细使用指南
+
+#### 版本文档
+
+- [v1.0.0 MVP](./docs/versions/v1.0.0-MVP/) - 已发布版本
+- [v1.1.0 开发中](./docs/versions/v1.1.0/) - 当前开发版本
 
 ### 🎯 使用示例
 
@@ -228,7 +234,7 @@ pnpm format
 3. 在 `components/editor/left-sidebar.tsx` 中注册组件
 4. 在 `components/editor/property-panel/` 中添加配置表单
 
-详见 [前端设计文档](./docs/tech/frontend.md)
+详见 [前端架构文档](./docs/development/frontend/architecture.md)
 
 ### 🤝 贡献指南
 
@@ -412,11 +418,17 @@ low-code-engine/
 
 ### 📚 Documentation
 
-- [Product Requirements (PRD)](./docs/prd.md)
-- [Technical Design](./docs/tech_design.md)
-- [Development Tasks](./docs/tasks.md)
-- [Drag & Drop System Refactor](./docs/tech/drag-drop-system-refactor.md)
-- [Design Style Guide](./docs/DesignStyleGuide.md)
+- [📖 Documentation Center](./docs/) - Complete documentation portal
+- [🚀 Quick Start](./docs/user-guide/getting-started.md) - Get started in 5 minutes
+- [📋 Product Roadmap](./docs/product/roadmap.md) - Product development plan
+- [🏗️ System Architecture](./docs/development/architecture.md) - Technical architecture
+- [🔧 API Documentation](./docs/development/api/api.md) - API reference
+- [📖 User Manual](./docs/user-guide/user-manual.md) - Detailed user guide
+
+#### Version Documentation
+
+- [v1.0.0 MVP](./docs/versions/v1.0.0-MVP/) - Released version
+- [v1.1.0 In Development](./docs/versions/v1.1.0/) - Current development version
 
 ### 🎯 Usage Example
 
@@ -462,7 +474,7 @@ pnpm format
 3. Register component in `components/editor/left-sidebar.tsx`
 4. Add configuration form in `components/editor/property-panel/`
 
-See [Frontend Design Documentation](./docs/tech/frontend.md) for details.
+See [Frontend Architecture](./docs/development/frontend/architecture.md) for details.
 
 ### 🤝 Contributing
 
