@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LowCode Engine - Data Model Editor</title>
+    <style>
+      :root {
+        --color-text: #383838;
+        --color-text-secondary: #666666;
+        --color-text-muted: #999999;
+
+        --color-bg-app: #f9f9f9;
+        --color-bg-panel: #ffffff;
+        --color-bg-hover: #f0f0f0;
+
+        --color-accent: #16aa98;
+
+        --border-main: 1.5px solid #383838;
+        --border-light: 1px solid #e5e5e5;
+        --border-accent: 1.5px solid #16aa98;
+
+        --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--color-bg-app);
+        color: var(--color-text);
+        line-height: 1.5;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--color-bg-panel);
+        border-bottom: var(--border-light);
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        flex-shrink: 0;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .back-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: var(--border-light);
+        color: var(--color-text);
+        cursor: pointer;
+      }
+      .back-btn:hover {
+        background: var(--color-bg-hover);
+      }
+
+      .breadcrumb {
+        font-size: 14px;
+        color: var(--color-text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .breadcrumb span.active {
+        color: var(--color-text);
+        font-weight: 600;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        height: 32px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+      }
+
+      .btn-ghost {
+        color: var(--color-text);
+      }
+      .btn-ghost:hover {
+        background: var(--color-bg-hover);
+      }
+
+      .btn-primary {
+        background: var(--color-text);
+        color: #fff;
+        font-weight: 600;
+      }
+      .btn-primary:hover {
+        background: #000;
+      }
+
+      /* Editor Layout */
+      .editor-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 300px;
+        background: var(--color-bg-app);
+        border-right: var(--border-light);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-header {
+        padding: 16px;
+        border-bottom: var(--border-light);
+      }
+      .btn-add-field {
+        width: 100%;
+        height: 36px;
+        border: var(--border-main);
+        background: transparent;
+        color: var(--color-text);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      .btn-add-field:hover {
+        background: var(--color-bg-panel);
+      }
+
+      .field-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .field-item {
+        height: 44px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        font-size: 13px;
+        color: var(--color-text);
+      }
+
+      .field-item:hover {
+        background: var(--color-bg-hover);
+      }
+
+      .field-item.active {
+        background: var(--color-bg-panel);
+        border-left-color: var(--color-accent);
+        color: var(--color-accent);
+        font-weight: 500;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .field-icon {
+        color: var(--color-text-muted);
+        margin-right: 12px;
+      }
+      .field-item.active .field-icon {
+        color: var(--color-accent);
+      }
+
+      .field-name {
+        flex: 1;
+      }
+
+      .field-type {
+        font-size: 10px;
+        font-family: monospace;
+        color: var(--color-text-secondary);
+        background: #e0e0e0;
+        padding: 2px 6px;
+      }
+
+      /* Main Panel */
+      .main-panel {
+        flex: 1;
+        background: var(--color-bg-panel);
+        padding: 32px 48px;
+        overflow-y: auto;
+      }
+
+      .panel-section {
+        margin-bottom: 40px;
+        max-width: 600px;
+      }
+
+      .section-header {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+      }
+      .section-header::before {
+        content: '';
+        display: block;
+        width: 4px;
+        height: 14px;
+        background: var(--color-accent);
+        margin-right: 12px;
+      }
+
+      /* Form Controls */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .input {
+        width: 100%;
+        height: 36px;
+        padding: 0 12px;
+        font-family: inherit;
+        font-size: 13px;
+        color: var(--color-text);
+        border: var(--border-light);
+        background: #fff;
+        outline: none;
+      }
+
+      /* Admin Strict Override */
+      .input {
+        border-width: 1.5px;
+        border-radius: 0;
+      }
+
+      .input:focus {
+        border-color: var(--color-accent);
+      }
+
+      /* Select styling simple */
+      select.input {
+        -webkit-appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 12px top 50%;
+        background-size: 8px auto;
+      }
+
+      /* Validation Rules */
+      .rule-card {
+        background: var(--color-bg-app);
+        border: var(--border-light);
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .rule-info {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .rule-type {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .rule-value {
+        color: var(--color-text-secondary);
+        font-size: 13px;
+      }
+
+      .btn-icon {
+        cursor: pointer;
+        opacity: 0.5;
+      }
+      .btn-icon:hover {
+        opacity: 1;
+        color: #d32f2f;
+      }
+
+      .add-rule-btn {
+        font-size: 12px;
+        color: var(--color-accent);
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .add-rule-btn:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <div class="back-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </div>
+        <div class="breadcrumb">
+          <span>Data Center</span>
+          <span>/</span>
+          <span class="active">Customer</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost">Preview SQL</button>
+        <button class="btn btn-primary">Publish Changes</button>
+      </div>
+    </header>
+
+    <!-- Editor Container -->
+    <div class="editor-container">
+      <!-- Left Sidebar: Fields -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <button class="btn-add-field">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Field
+          </button>
+        </div>
+
+        <div class="field-list">
+          <!-- System Field -->
+          <div class="field-item">
+            <svg
+              class="icon field-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            <span class="field-name">id</span>
+            <span class="field-type">UUID</span>
+          </div>
+
+          <!-- Editing Field -->
+          <div class="field-item active">
+            <svg
+              class="icon field-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
+            </svg>
+            <span class="field-name">email</span>
+            <span class="field-type">TEXT</span>
+          </div>
+
+          <!-- Other Fields -->
+          <div class="field-item">
+            <svg
+              class="icon field-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
+            </svg>
+            <span class="field-name">name</span>
+            <span class="field-type">TEXT</span>
+          </div>
+
+          <div class="field-item">
+            <svg
+              class="icon field-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="field-name">created_at</span>
+            <span class="field-type">DATE</span>
+          </div>
+
+          <div class="field-item">
+            <svg
+              class="icon field-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            <span class="field-name">orders</span>
+            <span class="field-type">REL</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Panel: Field Config -->
+      <main class="main-panel">
+        <!-- General Config -->
+        <div class="panel-section">
+          <div class="section-header">Field Configuration</div>
+
+          <div class="form-group">
+            <label class="label">Field Key (DB Column)</label>
+            <input type="text" class="input" value="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="label">Display Name</label>
+            <input type="text" class="input" value="Email Address" />
+          </div>
+
+          <div class="form-group">
+            <label class="label">Data Type</label>
+            <select class="input">
+              <option value="text" selected>Text</option>
+              <option value="number">Number</option>
+              <option value="boolean">Boolean</option>
+              <option value="date">Date</option>
+              <option value="json">JSON</option>
+              <option value="relation">Relationship</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Constraints -->
+        <div class="panel-section">
+          <div class="section-header">Constraints & Validation</div>
+
+          <div class="rule-card">
+            <div class="rule-info">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span class="rule-type">Required</span>
+              <span class="rule-value">true</span>
+            </div>
+            <div class="btn-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-info">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span class="rule-type">Unique</span>
+              <span class="rule-value">true</span>
+            </div>
+            <div class="btn-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px">
+            <div class="add-rule-btn">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Validation Rule
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

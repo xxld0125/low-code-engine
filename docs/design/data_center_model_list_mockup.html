@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LowCode Engine - Data Center</title>
+    <style>
+      :root {
+        --color-text: #383838;
+        --color-text-secondary: #666666;
+        --color-text-muted: #999999;
+
+        --color-bg-app: #f9f9f9;
+        --color-bg-panel: #ffffff;
+
+        --color-accent: #16aa98;
+        --color-accent-light: rgba(22, 170, 152, 0.1);
+
+        --border-main: 1.5px solid #383838;
+        --border-light: 1px solid #e5e5e5;
+
+        --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--color-bg-app);
+        color: var(--color-text);
+        line-height: 1.5;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Icons */
+      .icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--color-bg-panel);
+        border-bottom: var(--border-light);
+        height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        flex-shrink: 0;
+      }
+
+      .logo {
+        font-weight: 700;
+        font-size: 16px;
+        margin-right: 48px;
+        color: var(--color-text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        height: 100%;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-text);
+        text-decoration: none;
+        opacity: 0.6;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+      }
+
+      .nav-item:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.02);
+      }
+
+      .nav-item.active {
+        opacity: 1;
+        border-bottom-color: var(--color-accent);
+      }
+
+      /* Main Content */
+      main {
+        flex: 1;
+        padding: 32px 48px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        overflow-y: auto;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 32px;
+      }
+
+      .page-title h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .page-desc {
+        color: var(--color-text-secondary);
+        font-size: 14px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background-color: var(--color-text);
+        color: #fff;
+        border: none;
+      }
+      .btn-primary:hover {
+        background-color: #000;
+      }
+
+      /* Grid */
+      .models-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+      }
+
+      /* Model Card */
+      .model-card {
+        background: var(--color-bg-panel);
+        border: var(--border-light);
+        height: 160px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .model-card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0px rgba(22, 170, 152, 0.1);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+
+      .model-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-accent-light);
+        color: var(--color-accent);
+      }
+
+      .menu-btn {
+        opacity: 0;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 4px;
+      }
+      .model-card:hover .menu-btn {
+        opacity: 1;
+      }
+      .menu-btn:hover {
+        color: var(--color-text);
+        background: #f0f0f0;
+      }
+
+      .model-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--color-text);
+      }
+
+      .model-code {
+        font-size: 12px;
+        font-family: monospace;
+        color: var(--color-text-muted);
+        margin-bottom: 12px;
+      }
+
+      .tags {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      .tag {
+        background: #f4f4f5;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: var(--color-text-secondary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Create New Card */
+      .model-card.create-new {
+        background: transparent;
+        border: 1px dashed #cccccc;
+        align-items: center;
+        justify-content: center;
+      }
+      .model-card.create-new:hover {
+        border-color: var(--color-accent);
+        background: rgba(22, 170, 152, 0.02);
+      }
+      .create-content {
+        text-align: center;
+        color: var(--color-text-muted);
+      }
+      .model-card.create-new:hover .create-content {
+        color: var(--color-accent);
+      }
+      .create-icon {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        LowCode Engine
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="nav-item">Dashboard</a>
+        <a href="#" class="nav-item">App Design</a>
+        <a href="#" class="nav-item active">Data Center</a>
+        <a href="#" class="nav-item">Settings</a>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Data Models</h1>
+          <p class="page-desc">Define and manage your application's data structure.</p>
+        </div>
+        <button class="btn btn-primary">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New Model
+        </button>
+      </div>
+
+      <div class="models-grid">
+        <!-- Model Card 1 -->
+        <div class="model-card">
+          <div class="card-header">
+            <div class="model-icon">
+              <!-- Database Icon -->
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <div class="menu-btn">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="model-name">Customer</div>
+            <div class="model-code">ds_customer</div>
+          </div>
+          <div class="tags">
+            <div class="tag">8 Fields</div>
+            <div class="tag">1 Rel</div>
+          </div>
+        </div>
+
+        <!-- Model Card 2 -->
+        <div class="model-card">
+          <div class="card-header">
+            <div class="model-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <div class="menu-btn">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="model-name">Order</div>
+            <div class="model-code">ds_order</div>
+          </div>
+          <div class="tags">
+            <div class="tag">12 Fields</div>
+            <div class="tag">2 Rels</div>
+          </div>
+        </div>
+
+        <!-- Model Card 3 -->
+        <div class="model-card">
+          <div class="card-header">
+            <div class="model-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <div class="menu-btn">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="model-name">Product</div>
+            <div class="model-code">ds_product</div>
+          </div>
+          <div class="tags">
+            <div class="tag">6 Fields</div>
+          </div>
+        </div>
+
+        <!-- Create New -->
+        <div class="model-card create-new">
+          <div class="create-content">
+            <div class="create-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="width: 24px; height: 24px"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <div>Create Model</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
