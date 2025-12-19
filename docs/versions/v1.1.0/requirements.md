@@ -26,7 +26,8 @@
 - **模型定义**：
   - 创建模型 (Model/Table)，例如 "Customer", "Order"。
   - 定义字段 (Fields)：支持 文本, 数字, 布尔, 日期, 枚举(Select), JSON。
-  - **字段验证规则**：支持 `必填(required)`, `唯一(unique)`, `默认值(defaultValue)`, `正则约束(regex)`。
+  - **字段验证规则**：支持 `必填(required)`, `唯一(unique)`。
+    > _注：`默认值(defaultValue)` 和 `正则约束(regex)` 已延期至 v1.2.0 版本交付。_
   - **关联关系 (Relationships)**：支持模型间 **1:N** 关联 (Foreign Key)，例如 "一个用户拥有多个订单"。
   - 系统字段自动注入：`id`, `created_at`, `updated_at`, `creator_id`。
   - **删除模型**：支持删除不再需要的模型，删除操作会同时清理物理表(DROP TABLE CASCADE)和元数据，并提供确认对话框防止误操作。
@@ -46,14 +47,9 @@
 
 ### 2.3 页面设计器集成 (Data Consumption)
 
-在页面设计器中，用户通过"数据源配置"与数据对象产生关联。
+> **[已延期]**: 本节内容已整体延期至 v1.2.0 版本。v1.1.0 仅提供基础的表格组件直接绑定模型能力。
 
-- **页面级数据源 (Page Data Source)**：
-  - 在页面的"数据面板"中，添加一个数据源（如命名为 `myCustomers`），绑定到 P0 定义的 "Customer" 模型。
-  - 支持配置初始加载参数（如 `limit`, `orderBy`）。
-- **变量绑定 (Binding)**：
-  - 组件属性支持表达式绑定，例如将表格的 `DataSource` 属性绑定为 `{{ myCustomers.data }}`。
-  - 此机制解耦了"组件"与"模型"，组件只需接收标准数组即可。
+_详情请参考 v1.2.0 需求文档。_
 
 ---
 
