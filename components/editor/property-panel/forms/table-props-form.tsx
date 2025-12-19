@@ -4,10 +4,18 @@ import { ComponentNode } from '@/types/editor'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useEditorStore } from '@/stores/editor-store'
+import { useModelStore } from '@/stores/useModelStore'
 import { Plus, Trash2, GripVertical, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PropertyInput } from '../property-input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface TableColumn {
   field: string
@@ -23,6 +31,7 @@ interface TablePropsFormProps {
 
 export function TablePropsForm({ component }: TablePropsFormProps) {
   const updateComponentProps = useEditorStore((state) => state.updateComponentProps)
+  const { models, fetchModels } = useModelStore()
   const [isGenerating, setIsGenerating] = useState(false)
 
   const props = component.props as {
@@ -32,6 +41,13 @@ export function TablePropsForm({ component }: TablePropsFormProps) {
   }
 
   const [columns, setColumns] = useState<TableColumn[]>(props.columns || [])
+
+  // Fetch models on mount
+  useEffect(() => {
+    if (models.length === 0) {
+      fetchModels()
+    }
+  }, [models.length, fetchModels])
 
   // Sync local state with component props
   useEffect(() => {
@@ -71,21 +87,25 @@ export function TablePropsForm({ component }: TablePropsFormProps) {
 
   const autoGenerateColumns = async () => {
     if (!props.tableName) {
-      alert('Please enter a table name first')
+      alert('Please select a table first')
+      return
+    }
+
+    // Find the model by table_name
+    const selectedModel = models.find((m) => m.table_name === props.tableName)
+    if (!selectedModel) {
+      alert('Model not found. Please ensure the table is defined in Data Center.')
       return
     }
 
     setIsGenerating(true)
     try {
-      const response = await fetch(`/api/schema/columns?tableName=${props.tableName}`)
-      if (!response.ok) throw new Error('Failed to fetch schema')
+      // Filter out system fields and generate columns from model fields
+      const userFields = selectedModel.fields.filter((f) => !f.isSystem)
 
-      const tableColumns = await response.json()
-
-      const generatedColumns: TableColumn[] = tableColumns.map((col: { column_name: string }) => ({
-        field: col.column_name,
-        header:
-          col.column_name.charAt(0).toUpperCase() + col.column_name.slice(1).replace(/_/g, ' '),
+      const generatedColumns: TableColumn[] = userFields.map((field) => ({
+        field: field.key,
+        header: field.name, // Use display name from Data Center
         visible: true,
       }))
 
@@ -101,19 +121,27 @@ export function TablePropsForm({ component }: TablePropsFormProps) {
 
   return (
     <div className="space-y-6">
-      {/* Table Name */}
+      {/* Table Name - Dropdown Select */}
       <div>
         <Label htmlFor="table-name" className="text-xs font-medium">
           Table Name
         </Label>
-        <PropertyInput
-          id="table-name"
-          placeholder="e.g., users, posts"
+        <Select
           value={props.tableName || ''}
           onValueChange={(value) => handleTableNameChange(value)}
-          className="mt-1.5 font-mono text-[13px]"
-        />
-        <p className="mt-1 text-[11px] text-gray-500">The Supabase table to bind</p>
+        >
+          <SelectTrigger id="table-name" className="mt-1.5 font-mono text-[13px]">
+            <SelectValue placeholder="Select a table..." />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map((model) => (
+              <SelectItem key={model.id} value={model.table_name}>
+                {model.name} ({model.table_name})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="mt-1 text-[11px] text-gray-500">Select a table from Data Center</p>
       </div>
 
       {/* Page Size */}

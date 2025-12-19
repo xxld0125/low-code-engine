@@ -47,11 +47,13 @@ export function RuntimeTable({ componentId, tableName, ...props }: RuntimeTableP
   }
 
   // Transform editor columns (field) to Table columns (accessorKey)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tableColumns = props.columns?.map((col: any) => ({
+  const tableColumns = props.columns?.map((col) => ({
     accessorKey: col.field,
     header: col.header,
   }))
+
+  // Check if data is empty (runtime mode)
+  const isEmpty = !isLoading && (!data || data.length === 0)
 
   return (
     <Table
@@ -60,6 +62,8 @@ export function RuntimeTable({ componentId, tableName, ...props }: RuntimeTableP
       columns={tableColumns}
       data={data as Record<string, unknown>[]}
       className={isLoading ? 'opacity-50' : ''}
+      isRuntime={true}
+      isEmpty={isEmpty}
     />
   )
 }

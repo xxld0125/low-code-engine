@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Inbox } from 'lucide-react'
 
 interface BaseProps extends HTMLAttributes<HTMLDivElement> {
   style?: CSSProperties
@@ -20,27 +21,36 @@ export interface TableProps extends BaseProps {
   tableName?: string
   columns?: Array<{ accessorKey?: string; field?: string; header: string }>
   data?: Record<string, unknown>[]
+  isRuntime?: boolean
+  isEmpty?: boolean
 }
 
 export const Table = forwardRef<HTMLDivElement, TableProps>(
-  ({ tableName, columns, data, style, className, children, ...props }, ref) => {
+  ({ tableName, columns, data, isRuntime, isEmpty, style, className, children, ...props }, ref) => {
     // Normalize columns to ensure accessorKey exists (support 'field' from editor)
     const normalizedColumns = columns?.map((col) => ({
       ...col,
       accessorKey: col.accessorKey || col.field || '',
     }))
 
-    // Mock data if not provided
+    // Mock data if not provided and not in runtime mode
     const mockColumns = normalizedColumns || [
       { accessorKey: 'id', header: 'ID' },
       { accessorKey: 'name', header: 'Name' },
       { accessorKey: 'created_at', header: 'Created At' },
     ]
-    const mockData = data || [
-      { id: 1, name: 'Sample Row 1', created_at: '2023-01-01' },
-      { id: 2, name: 'Sample Row 2', created_at: '2023-01-02' },
-      { id: 3, name: 'Sample Row 3', created_at: '2023-01-03' },
-    ]
+
+    // In runtime mode, use actual data; in editor mode, use mock data for preview
+    const displayData = isRuntime
+      ? data || []
+      : data || [
+          { id: 1, name: 'Sample Row 1', created_at: '2023-01-01' },
+          { id: 2, name: 'Sample Row 2', created_at: '2023-01-02' },
+          { id: 3, name: 'Sample Row 3', created_at: '2023-01-03' },
+        ]
+
+    // Show empty state only in runtime mode when data is empty
+    const showEmptyState = isRuntime && isEmpty
 
     return (
       <div ref={ref} className={cn('relative', className)} style={style} {...props}>
@@ -67,31 +77,42 @@ export const Table = forwardRef<HTMLDivElement, TableProps>(
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockData.map((row, i) => (
-                // Admin Style: Row border #383838 (Strict Mode)
-                <TableRow key={i} className="border-b border-[#383838] hover:bg-[#16AA98]/5">
-                  {mockColumns.map((col) => {
-                    const cellValue = row[col.accessorKey]
-                    let displayValue = cellValue as ReactNode
-
-                    // Handle boolean values specifically
-                    if (typeof cellValue === 'boolean') {
-                      displayValue = String(cellValue) // "true" or "false"
-                    } else if (cellValue === null || cellValue === undefined) {
-                      displayValue = ''
-                    }
-
-                    return (
-                      <TableCell
-                        key={`${i}-${col.accessorKey}`}
-                        className="py-2 text-[13px] text-[#383838]"
-                      >
-                        {displayValue}
-                      </TableCell>
-                    )
-                  })}
+              {showEmptyState ? (
+                <TableRow>
+                  <TableCell colSpan={mockColumns.length} className="h-32 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
+                      <Inbox className="h-10 w-10" />
+                      <span className="text-sm">暂无数据</span>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                displayData.map((row, i) => (
+                  // Admin Style: Row border #383838 (Strict Mode)
+                  <TableRow key={i} className="border-b border-[#383838] hover:bg-[#16AA98]/5">
+                    {mockColumns.map((col) => {
+                      const cellValue = row[col.accessorKey]
+                      let displayValue = cellValue as ReactNode
+
+                      // Handle boolean values specifically
+                      if (typeof cellValue === 'boolean') {
+                        displayValue = String(cellValue) // "true" or "false"
+                      } else if (cellValue === null || cellValue === undefined) {
+                        displayValue = ''
+                      }
+
+                      return (
+                        <TableCell
+                          key={`${i}-${col.accessorKey}`}
+                          className="py-2 text-[13px] text-[#383838]"
+                        >
+                          {displayValue}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </UiTable>
         </div>

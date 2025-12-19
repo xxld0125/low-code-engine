@@ -4,6 +4,7 @@ import { ComponentNode } from '@/types/editor'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useEditorStore } from '@/stores/editor-store'
+import { useModelStore } from '@/stores/useModelStore'
 import { Plus, Trash2, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -30,6 +31,7 @@ interface FormPropsFormProps {
 
 export function FormPropsForm({ component }: FormPropsFormProps) {
   const updateComponentProps = useEditorStore((state) => state.updateComponentProps)
+  const { models, fetchModels } = useModelStore()
   const [isGenerating, setIsGenerating] = useState(false)
 
   const props = component.props as {
@@ -39,6 +41,13 @@ export function FormPropsForm({ component }: FormPropsFormProps) {
   }
 
   const [fields, setFields] = useState<FormField[]>(props.fields || [])
+
+  // Fetch models on mount
+  useEffect(() => {
+    if (models.length === 0) {
+      fetchModels()
+    }
+  }, [models.length, fetchModels])
 
   // Sync local state with component props
   useEffect(() => {
@@ -79,28 +88,28 @@ export function FormPropsForm({ component }: FormPropsFormProps) {
 
   const autoGenerateFields = async () => {
     if (!props.tableName) {
-      alert('Please enter a table name first')
+      alert('Please select a table first')
+      return
+    }
+
+    // Find the model by table_name
+    const selectedModel = models.find((m) => m.table_name === props.tableName)
+    if (!selectedModel) {
+      alert('Model not found. Please ensure the table is defined in Data Center.')
       return
     }
 
     setIsGenerating(true)
     try {
-      // Call SchemaService to get table columns
-      const response = await fetch(`/api/schema/columns?tableName=${props.tableName}`)
-      if (!response.ok) throw new Error('Failed to fetch schema')
+      // Filter out system fields and generate form fields from model fields
+      const userFields = selectedModel.fields.filter((f) => !f.isSystem)
 
-      const columns = await response.json()
-
-      // Convert columns to FormFields
-      const generatedFields: FormField[] = columns.map(
-        (col: { column_name: string; data_type: string; is_nullable: boolean }) => ({
-          name: col.column_name,
-          label:
-            col.column_name.charAt(0).toUpperCase() + col.column_name.slice(1).replace(/_/g, ' '),
-          type: mapDbTypeToFormType(col.data_type),
-          required: !col.is_nullable,
-        })
-      )
+      const generatedFields: FormField[] = userFields.map((field) => ({
+        name: field.key,
+        label: field.name, // Use display name from Data Center
+        type: mapFieldType(field.type),
+        required: field.validation?.required ?? false,
+      }))
 
       setFields(generatedFields)
       updateComponentProps(component.id, { fields: generatedFields })
@@ -112,33 +121,45 @@ export function FormPropsForm({ component }: FormPropsFormProps) {
     }
   }
 
-  const mapDbTypeToFormType = (dbType: string): FormField['type'] => {
-    if (dbType.includes('int') || dbType.includes('numeric') || dbType.includes('decimal')) {
-      return 'number'
+  const mapFieldType = (type: string): FormField['type'] => {
+    switch (type) {
+      case 'number':
+        return 'number'
+      case 'boolean':
+        return 'boolean'
+      case 'date':
+      case 'datetime':
+        return 'date'
+      case 'select':
+        return 'select'
+      default:
+        return 'text'
     }
-    if (dbType.includes('bool')) {
-      return 'boolean'
-    }
-    if (dbType.includes('date') || dbType.includes('time')) {
-      return 'date'
-    }
-    return 'text'
   }
 
   return (
     <div className="space-y-6">
-      {/* Table Name */}
+      {/* Table Name - Dropdown Select */}
       <div>
         <Label htmlFor="form-table-name" className="text-xs font-medium">
           Table Name
         </Label>
-        <PropertyInput
-          id="form-table-name"
-          placeholder="e.g., users, posts"
+        <Select
           value={props.tableName || ''}
           onValueChange={(value) => handleTableNameChange(value)}
-          className="mt-1.5 font-mono text-[13px]"
-        />
+        >
+          <SelectTrigger id="form-table-name" className="mt-1.5 font-mono text-[13px]">
+            <SelectValue placeholder="Select a table..." />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map((model) => (
+              <SelectItem key={model.id} value={model.table_name}>
+                {model.name} ({model.table_name})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="mt-1 text-[11px] text-gray-500">Select a table from Data Center</p>
       </div>
 
       {/* Mode */}

@@ -29,6 +29,7 @@
   - **字段验证规则**：支持 `必填(required)`, `唯一(unique)`, `默认值(defaultValue)`, `正则约束(regex)`。
   - **关联关系 (Relationships)**：支持模型间 **1:N** 关联 (Foreign Key)，例如 "一个用户拥有多个订单"。
   - 系统字段自动注入：`id`, `created_at`, `updated_at`, `creator_id`。
+  - **删除模型**：支持删除不再需要的模型，删除操作会同时清理物理表(DROP TABLE CASCADE)和元数据，并提供确认对话框防止误操作。
 - **物理层同步**：
   - 点击"发布"或"保存"时，底层自动在 Supabase 调用 `CREATE/ALTER TABLE`。
   - 自动创建相应的索引和外键约束。
