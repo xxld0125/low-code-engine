@@ -187,7 +187,8 @@ low-code-engine/
 #### 版本文档
 
 - [v1.0.0 MVP](./docs/versions/v1.0.0-MVP/) - 已发布版本
-- [v1.1.0 开发中](./docs/versions/v1.1.0/) - 当前开发版本
+- [v1.1.0 Data Engine](./docs/versions/v1.1.0/) - 已发布 (数据驱动核心)
+- [v1.2.0 Planning](./docs/versions/v1.2.0/) - 规划中 (智能组件)
 
 ### 🎯 使用示例
 
@@ -426,7 +427,8 @@ low-code-engine/
 #### Version Documentation
 
 - [v1.0.0 MVP](./docs/versions/v1.0.0-MVP/) - Released version
-- [v1.1.0 In Development](./docs/versions/v1.1.0/) - Current development version
+- [v1.1.0 Data Engine](./docs/versions/v1.1.0/) - Released (Data Driven Core)
+- [v1.2.0 Planning](./docs/versions/v1.2.0/) - Planning (Smart Components)
 
 ### 🎯 Usage Example
 
