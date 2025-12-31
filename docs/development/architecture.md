@@ -349,8 +349,51 @@ POST   /api/operations            # 记录操作
 3. **分布式**: 微服务化改造
 4. **AI 集成**: AI 辅助开发功能
 
+## 11. 关键技术演进规划 (Technical Evolution)
+
+本章节记录了来自《低代码平台架构实战》的关键技术决策，作为未来版本迭代的技术储备。
+
+### 11.1 渲染与交互 (Renderer & Interaction)
+
+- **画布隔离**:
+  - **方案**: 引入 `iframe` 隔离画布。
+  - **价值**: 防止全局样式污染（如 Tailwind 样式冲突），提供纯净的组件渲染环境，模拟不同视口尺寸。
+  - **实现挑战**: 需要建立基于 `postMessage` 的父子窗口通信机制。
+- **无限画布 (Infinite Canvas)**:
+  - **实现**: 基于 transform (scale/translate) 实现画布的缩放与漫游。
+  - **场景**: 复杂流程编排、自由布局设计。
+- **高性能表格 (Canvas Table)**:
+  - **瓶颈**: DOM 渲染在千行以上数据时出现卡顿。
+  - **方案**: 引入 Canvas 绘制表格内容（参考 Excel/Google Sheets），仅渲染视口内容。
+
+### 11.2 物料体系 (Materials System)
+
+- **动态加载 (Remote Loading)**:
+  - **机制**: 支持通过 URL 动态加载组件资源。
+  - **技术**: 使用 `import()` 或 `SystemJs` 加载 UMD/ESM 模块。
+  - **注册**: 提供 `registerComponent` 运行时 API。
+- **版本管理**:
+  - **策略**: 处理组件的多版本共存，预防 Dependency Hell。
+
+### 11.3 脚本与安全 (Scripting & Security)
+
+- **沙箱机制 (Sandbox)**:
+  - **场景**: 用户自定义 JS 逻辑（如数据转换、事件处理）。
+  - **方案 A (轻量)**: `new Function` + `with` + `Proxy` 拦截全局访问。
+  - **方案 B (隔离)**: 在无权限的 iframe 中执行代码。
+  - **方案 C (未来)**: 使用 ShadowRealm API。
+
+### 11.4 协同与出码 (Collaboration & CodeGen)
+
+- **实时协同**:
+  - **算法**: CRDT (Conflict-free Replicated Data Type)。
+  - **库**: Yjs + WebSocket。
+- **出码策略**:
+  - **JIT (运行时)**: 当前模式，Schema -> Renderer -> UI。
+  - **AOT (编译时)**: Schema -> Code Generator -> React Source Code -> Build -> UI。适用于对性能有极致要求或需要二次开发的场景。
+
 ---
 
-**文档版本**: 2.0
-**最后更新**: 2025-12-11
+**文档版本**: 2.1
+**最后更新**: 2025-12-31
 **适用版本**: v1.1.0+
