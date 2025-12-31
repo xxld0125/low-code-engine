@@ -10,8 +10,10 @@
 
 ### 📋 版本管理
 
-- [v1.0.0 MVP](versions/v1.0.0-MVP/) - 已发布的 MVP 版本文档
-- [v1.1.0 开发中](versions/v1.1.0/) - 当前开发版本文档
+- [项目路线图](../ROADMAP.md) - 📍 查看长期演进规划
+- [v1.0.0 MVP](versions/v1.0.0-MVP/) - 已发布 (基础编辑器)
+- [v1.1.0 Data Engine](versions/v1.1.0/) - 已发布 (数据驱动核心)
+- [v1.2.0 Platform Hardening](versions/v1.2.0/) - 规划中 (平台能力增强)
 
 ### 🎨 产品设计
 
